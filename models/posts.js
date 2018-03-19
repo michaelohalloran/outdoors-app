@@ -8,5 +8,13 @@ const postSchema = mongoose.Schema({
     //images here from multer
 });
 
-const Post = mongoose.model('Post', postSchema);
+postSchema.methods.serialize = function () {
+    return {
+        title: this.title,
+        content: this.content,
+        image: this.image
+    };
+};
+
+const Post = mongoose.model('post', postSchema);
 module.exports = {Post};

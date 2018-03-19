@@ -1,0 +1,45 @@
+{
+    "posts": [
+        {
+            "title": "Cloud's Rest",
+            "content": "Description 1 here",
+            "image": "https://tobyharriman.com/wp-content/uploads/2015/11/Aspen_Colorado_New_Years_2015-3-1024x640.jpg"
+        },
+        {
+            "title": "Elk Overlook",
+            "content": "Description 2 here",
+            "image": "https://www.uncovercolorado.com/wp-content/uploads/2017/08/elk-colorado-rocky-mountains-.jpg"
+        },
+        {
+            "title": "Uncompaghre",
+            "content": "Description 3 here",
+            "image": "https://brightcove04pmdo-a.akamaihd.net/5104226627001/5104226627001_5222667865001_5219431505001-vs.jpg?pubId=5104226627001&videoId=5219431505001"
+        },
+        {
+            "title": "Maroon Bells",
+            "content": "Description 4 here",
+            "image": "https://i.ytimg.com/vi/pyFasKZ87gc/maxresdefault.jpg"
+        },
+        {
+            "title": "Pikes",
+            "content": "Description 5 here",
+            "image": "http://cdn-image.travelandleisure.com/sites/default/files/1504278589/pikes-peak-COLORADOSPRINGS0917.jpg"
+        },
+        {
+            "title": "Rockies",
+            "content": "Description 6 here",
+            "image": "http://www.sangres.com/cimages/features/panoramas04/kitcarson01big.jpg"
+        },
+        {
+            "title": "Rocky Road",
+            "content": "Description 7 here",
+            "image": "https://i.pinimg.com/originals/bd/e4/c1/bde4c1857dcaeda9aaccc1b91bf8f5e9.jpg"
+        },
+        {
+            "title": "Wildflower Vista",
+            "content": "Description 8 here",
+            "image": "https://www.tadbowman.com/images/xl/MorningGlow.jpg"
+        }
+    ]
+}
+
