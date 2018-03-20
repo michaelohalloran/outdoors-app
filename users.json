@@ -1,0 +1,18 @@
+[
+    {
+        "username": "bob1234",
+        "password": "secretcode"
+    },
+    {
+        "username": "bill4567",
+        "password": "goodpassword"
+    },
+    {
+        "username": "jim6789",
+        "password": "betterpassword"
+    },
+    {
+        "username": "joe9012",
+        "password": "bestpassword"
+    }
+]

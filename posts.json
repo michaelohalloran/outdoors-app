@@ -1,5 +1,4 @@
-{
-    "posts": [
+  [
         {
             "title": "Cloud's Rest",
             "content": "Description 1 here",
@@ -41,5 +40,4 @@
             "image": "https://www.tadbowman.com/images/xl/MorningGlow.jpg"
         }
     ]
-}
 

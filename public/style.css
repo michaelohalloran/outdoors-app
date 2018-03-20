@@ -1,3 +1,28 @@
 body {
     box-sizing: border-box;
+    text-align: center;
+}
+
+#loginArea {
+    text-align: center;
+    margin: 10px;
+}
+
+input, button {
+    margin: 10px;
+    padding: 5px;
+}
+
+#gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+img {
+    margin: 5px;
+    transition: all 1s;
+}
+img:hover {
+    transform: scale(1.1);
 }

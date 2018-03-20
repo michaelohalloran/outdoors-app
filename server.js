@@ -18,72 +18,18 @@ app.use(bodyParser.urlencoded({ extended: true}));
 const {User} = require('./models/users');
 const {Post} = require('./models/posts');
 
-//import middleware
-const auth = require('./auth');
+//import users Route 
+const {router: postsRouter} = require('./routes/users');
+app.use('/posts', postsRouter);
 
-//*********************************************************************************************
-//ROUTES
-//*********************************************************************************************
+//import middleware
+const auth = require('./routes/auth');
 
 // let newPost = new Post({title: "Test Post 1", content: "Content here", image: "https://coloradosprings.gov/sites/default/files/styles/page_image/public/pikes_peak_highway.jpg?itok=Kqzh59pj"});
 
-app.get('/posts', (req, res)=> {
-    //retrieve all posts from DB and render them
-    Post
-        .find()
-        .then(posts=> {
-            res.json(posts.map((post)=>post.serialize()));
-        })
-        .catch(err=>{
-            console.error(err);
-            res.status(500).json({error: "Internal server error"});
-        });
-});
 
 
-// app.get('/posts/:id', (req, res)=> {
-//  Post
-//        .findOne()
-// })
-
-
-// app.post('/posts', (req, res)=> {
-//     //check is user is logged in, if so, allow them to post new post to DB
-
-//     //check required fields
-//     const requiredFields = ['title', 'content'];
-//     for(let i = 0; i < requiredFields.length; i++) {
-//         const field = requiredFields[i];
-//         if(!(field in req.body)) {
-//             const message = `Missing field ${field} in request body`;
-//             console.error(message);
-//             return res.status(400).send(message);
-//         }
-//     };
-
-//     Post
-//         .create({
-//             title: req.body.title,
-//             content: req.body.content,
-//             image: req.body.image
-//         })
-//         .then(post=> res.status(201).json(post.serialize()))
-//         .catch(err=> {
-//             console.error(err);
-//             res.status(500).message("Internal server error");
-//         });
-// });
-
-// app.put('/', (req, res)=> {
-//     //check is user is logged in; if so, allow them to update a post by ID from DB
-
-// });
-
-app.delete('/:id', (req, res)=> {
-    //check is user is logged in; if so, allow them to delete a post
-
-});
-
+//Possibly add runServer, closeServer, and require.main components here
 
 //this makes public holder files accessible to this app
 // app.use(express.static('public'));
