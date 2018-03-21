@@ -52,10 +52,12 @@ const deleteSuccessMsg = 'Post deleted!';
 //reveal btns (showIndex, create/update/delete)
 //https://v4-alpha.getbootstrap.com/components/alerts/
 
+//COPY JWT STUFF
 function logIn(event) {
     event.preventDefault();
     userNameVal = userNameInput.value;
     passwordVal = passwordInput.value;
+    console.log(userNameVal);
     //if data submitted correctly, log someone in by displaying other buttons
     //possible errors: wrong password, wrong username (misspelled or doesn't exist), or username already taken
     //checkUserName fires appropriate message based on whatever error was committed
@@ -64,7 +66,6 @@ function logIn(event) {
         if(checkPassword(passwordVal)) {
             //show buttons 
             displayBtns();        
-            console.log(userNameVal);
             //send username and password to routes?
         } else {
             //wrong password message shown here
@@ -86,20 +87,21 @@ function checkUserName(username) {
 function displayBtns() {
     //show all hidden buttons
     hiddenBtns.forEach((btn)=> {
-        btn.display
+        btn.style.display = "inline-block";
     });
 }
 
 
 function showRegisterForm() {
-    //if registerBtn clicked, change text of login form to indicate registration
+    //if registerBtn clicked, open modal form for registration
 }
 
 function registerNewUser() {
     //add this user to DB
-    //show registerSuccessMsg
-    //displayBtns, as w/ successful login
-    displayBtns();
+    // $.getJSON('/api/routes', //global bearer token attached to every request)
+    // //show registerSuccessMsg
+    // //displayBtns, as w/ successful login
+    // displayBtns();
 }
 
 function showUserIndexPage() {
@@ -123,6 +125,7 @@ function createPost() {
 }
 
 function showCreatePostForm() {
+    //open a createPost modal
     //modifies loginForm to show title, content, and image fields
 }
 

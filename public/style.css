@@ -13,6 +13,9 @@ input, button {
     padding: 5px;
 }
 
+.hiddenBtn {
+    display: none;
+}
 #gallery {
     display: flex;
     flex-wrap: wrap;
