@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const passport = require('passport');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const morgan = require('morgan');
-const mongoose = require('mongoose');
-
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 const router = express.Router();
 
 //import URLs for DB
@@ -16,16 +17,35 @@ router.use(morgan('common'));
 router.use(jsonParser);
 router.use(bodyParser.urlencoded({ extended: true}));
 
-const createAuthToken;
-const localAuth;
-const jwtAuth;
+const createAuthToken = function(user) {
+    return jwt.sign({user}, config.JWT_SECRET, {
+      subject: user.username,
+      expiresIn: config.JWT_EXPIRY,
+      algorithm: 'HS256'
+    });
+  };
+
+const localAuth = passport.authenticate('local', {session: false});
 
 //**********************************************************************************
 //CRUD ROUTES
 //**********************************************************************************
 
-// router.
+//get the token for user logging in
+router.post('/login', localAuth, (req,res)=> {
+    const authToken = createAuthToken(req.user.serialize());
+    res.json({authToken});
+});
 
+const jwtAuth = passport.authenticate('jwt', {session: false});
 
-module.exports = authenticateUser;
-module.exports = router;
+//refresh expired JWT token w/ updated one
+router.post('/refresh', jwtAuth, (req, res) => {
+    const authToken = createAuthToken(req.user);
+    res.json({authToken});
+  });
+  
+
+//restrict access only to logged in users
+
+module.exports = {router};

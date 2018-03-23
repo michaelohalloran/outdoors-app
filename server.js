@@ -1,14 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-
-//import URLs for DB
-const {TEST_URL, PORT} = require('./config.js');
-// mongoose.connect(TEST_URL);
-mongoose.Promise = global.Promise;
+const passport = require('passport');
 
 app.use(morgan('common'));
 app.use(jsonParser);
@@ -17,19 +14,35 @@ app.use(bodyParser.urlencoded({ extended: true}));
 //import Mongoose schema
 const {User} = require('./models/users');
 const {Post} = require('./models/posts');
+const { localStrategy, jwtStrategy } = require('./routes/strategies');
 
 //import routes
 const {router: postsRouter} = require('./routes/posts');
 const {router: authRouter} = require('./routes/auth');
+
+// mongoose.connect(TEST_URL);
+mongoose.Promise = global.Promise;
+//import URLs for DB
+const {TEST_URL, PORT} = require('./config.js');
+
 app.use('/posts', postsRouter);
 app.use('/users', authRouter);
 
-//import middleware
-const auth = require('./routes/auth');
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+const jwtAuth = passport.authenticate('jwt', {session: false});
+
+// //import middleware
+// const auth = require('./routes/auth');
 
 // let newPost = new Post({title: "Test Post 1", content: "Content here", image: "https://coloradosprings.gov/sites/default/files/styles/page_image/public/pikes_peak_highway.jpg?itok=Kqzh59pj"});
 
-
+//******************************************************* */
+//JWT ROUTES
+//******************************************************* */
+app.get('/api', (req,res)=>{
+    res.json({message: "Welcome to the API"});
+});
 
 let server;
 
