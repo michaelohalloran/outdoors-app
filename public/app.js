@@ -109,6 +109,15 @@ function showUserIndexPage() {
     //display modal of user's posts?  index page?
 }
 
+//if a post is clicked, or edit/delete buttons, this brings up modal of post for CRUD ops
+// function showModal() {
+//     //put code for BStrap modal here
+//     return 
+//         `
+//         <modal> etc. ${this.content}
+//         `;
+// }
+
 //runs on clicking delete button
 function deletePost() {
     //show deleteWarning and confirmDeleteButton

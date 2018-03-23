@@ -18,12 +18,12 @@ router.use(jsonParser);
 router.use(bodyParser.urlencoded({ extended: true}));
 
 const createAuthToken = function(user) {
-    return jwt.sign({user}, config.JWT_SECRET, {
-      subject: user.username,
-      expiresIn: config.JWT_EXPIRY,
-      algorithm: 'HS256'
-    });
-  };
+  return jwt.sign({user}, config.JWT_SECRET, {
+    subject: user.username,
+    expiresIn: config.JWT_EXPIRY,
+    algorithm: 'HS256'
+  });
+};
 
 const localAuth = passport.authenticate('local', {session: false});
 
@@ -31,8 +31,11 @@ const localAuth = passport.authenticate('local', {session: false});
 //CRUD ROUTES
 //**********************************************************************************
 
-//get the token for user logging in
+//creates authToken, returns it back to client
+//this involves authentication
+//this is /api/auth/login route
 router.post('/login', localAuth, (req,res)=> {
+  //something in Passport authenticate attaches additional ability (like "user") onto request object (could not have called this "blah")
     const authToken = createAuthToken(req.user.serialize());
     res.json({authToken});
 });
@@ -40,6 +43,7 @@ router.post('/login', localAuth, (req,res)=> {
 const jwtAuth = passport.authenticate('jwt', {session: false});
 
 //refresh expired JWT token w/ updated one
+//this is /api/auth/refresh route
 router.post('/refresh', jwtAuth, (req, res) => {
     const authToken = createAuthToken(req.user);
     res.json({authToken});

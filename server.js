@@ -12,24 +12,25 @@ app.use(jsonParser);
 app.use(bodyParser.urlencoded({ extended: true}));
 
 //import Mongoose schema
-const {User} = require('./models/users');
 const {Post} = require('./models/posts');
-const { localStrategy, jwtStrategy } = require('./routes/strategies');
 
 //import routes
 const {router: postsRouter} = require('./routes/posts');
-const {router: authRouter} = require('./routes/auth');
+const { router: usersRouter } = require('./users');
+const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 // mongoose.connect(TEST_URL);
 mongoose.Promise = global.Promise;
 //import URLs for DB
 const {TEST_URL, PORT} = require('./config.js');
 
-app.use('/posts', postsRouter);
-app.use('/users', authRouter);
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);
+app.use('/posts', postsRouter);
+app.use('/api/users/', usersRouter);
+app.use('/api/auth/', authRouter);
+
 const jwtAuth = passport.authenticate('jwt', {session: false});
 
 // //import middleware
@@ -40,9 +41,16 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 //******************************************************* */
 //JWT ROUTES
 //******************************************************* */
-app.get('/api', (req,res)=>{
-    res.json({message: "Welcome to the API"});
-});
+// A protected endpoint which needs a valid JWT to access it
+app.get('/api/protected', jwtAuth, (req, res) => {
+    return res.json({
+      data: 'rosebud'
+    });
+  });
+  
+  app.use('*', (req, res) => {
+    return res.status(404).json({ message: 'Not Found' });
+  });
 
 let server;
 
