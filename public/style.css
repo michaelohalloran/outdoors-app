@@ -3,9 +3,11 @@ body {
     text-align: center;
 }
 
-#loginArea {
+#loginOpen {
     text-align: center;
-    margin: 10px;
+    display: inline-block;
+    height: 60px;
+    width: 100px;
 }
 
 input, button {
@@ -16,14 +18,23 @@ input, button {
 .hiddenBtn {
     display: none;
 }
+
 #gallery {
-    display: flex;
+    margin-right: auto;
+    margin-left: auto;
+}
+.row {
+    /* display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: center; */
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 img {
     margin: 5px;
+    width: 200px;
     transition: all 1s;
 }
 img:hover {
