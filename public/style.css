@@ -3,6 +3,9 @@ body {
     text-align: center;
 }
 
+#userWelcome {
+    display: none;
+}
 #loginOpen {
     text-align: center;
     display: inline-block;
@@ -10,13 +13,13 @@ body {
     width: 100px;
 }
 
+#createOpen, #updateOpen, #indexOpen, #createModal, .hiddenBtn {
+    display: none;
+}
+
 input, button {
     margin: 10px;
     padding: 5px;
-}
-
-.hiddenBtn {
-    display: none;
 }
 
 #gallery {

@@ -16,6 +16,7 @@
   
         <h1>The Great Outdoors</h1>
         <!-- Modal Opens -->
+        <p id="userWelcome">Welcome</p>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal" id="loginOpen">
           Login
         </button>
@@ -26,12 +27,9 @@
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" id="updateOpen">
           Update post
         </button>
-        
-
-        <!-- <button type="button" class="btn btn-primary hiddenBtn" id="createBtn">Create new post</button>
-        <button type="button" class="btn btn-primary hiddenBtn" id="updateBtn">Update post</button>
-        <button type="button" class="btn btn-primary hiddenBtn" id="deleteBtn">Delete post</button>
-        <button type="button" class="btn btn-primary hiddenBtn" id="showIndexBtn">Show your index page</button> -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#indexModal" id="indexOpen">
+          Show your posts
+        </button>
 
         <section id="gallery">
           <!-- //retrieve current posts w/API call  -->
@@ -55,7 +53,7 @@
         </section>
 
         <section id="modalSection">
-          <!-- Modal -->
+          <!-- LOGIN MODAL -->
           <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content" id="modalContent">
@@ -71,11 +69,34 @@
                 </form>
                   <div class="modal-footer">
                     <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="loginBtn">Login</button>
+                    <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
                   </div>
               </div>
             </div>
           </div>
+
+          <!-- CREATE MODAL -->
+          <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content" id="createmodalContent">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="createModalHeader">Create a new post</h5>
+                </div>
+                <form id="createForm" action="/" method="POST"></form> 
+                  <div class="modal-body">
+                      Title: <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
+                      Content: <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
+                      Image: <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
+                  </div>
+                </form>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="createBtn">Create</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+
         </section>
           
           

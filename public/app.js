@@ -12,48 +12,67 @@
 //how to distinguish wrong password (i.e., existing user) from misspelled username?  
 
 
-//BUTTONS AND INPUTS
+//BUTTONS
+const pageTitle = document.getElementsByTagName('h1')[0];
+const loginTitle = document.getElementById('loginTitle');
 const loginBtn = document.getElementById("loginBtn");
 const loginOpen = document.getElementById("loginOpen");
 const registerBtn = document.getElementById("registerBtn");
 const createBtn = document.getElementById("createBtn");
-const createOpen = document.getElementById("createOpen");
 const updateBtn = document.getElementById("updateBtn");
-const updateOpen = document.getElementById("updateOpen");
 const deleteBtn = document.getElementById("deleteBtn");
 const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const showIndexBtn = document.getElementById("showIndexBtn");
+const hiddenBtns = [createBtn, updateBtn, deleteBtn, showIndexBtn];
+
+//MODALS AND OPENS
+const createOpen = document.getElementById("createOpen");
+const updateOpen = document.getElementById("updateOpen");
+const indexOpen = document.getElementById("indexOpen");
 const loginModal = document.getElementById("loginModal");
 const modalContent = document.getElementById("modalContent");
 const modalSection = document.getElementById("modalSection");
 let modal;
-const hiddenBtns = [createBtn, updateBtn, deleteBtn, showIndexBtn];
-const hiddenOpens = [createOpen,updateOpen];
+const createModal = document.getElementById('createModal');
+const createModalHeader = document.getElementById('createModalHeader');
+const hiddenOpens = [createOpen,updateOpen, indexOpen];
+
+//INPUT FIELDS
 let userNameInput = document.getElementById("username");
 let passwordInput = document.getElementById("password");
 let userNameVal;
 let passwordVal;
+const userWelcome = document.getElementById('userWelcome');
 const imageGallery = document.getElementById('gallery');
+const galleryRow = document.getElementsByClassName('row')[0];
+
+//CAPTURE FIELDS INSIDE CREATEPOST MODAL
+let imageUrlInput= document.getElementById('createImageURL');
+let titleInput= document.getElementById('createTitle');
+let contentInput= document.getElementById('createContent');
+let titleVal;
+let contentVal;
+let imageVal;
 
 //EVENT LISTENERS
 loginBtn.addEventListener("click", logIn);
 // registerBtn.addEventListener("click", registerNewUser);
 createBtn.addEventListener("click", createPost);
-updateBtn.addEventListener("click", updatePost);
-deleteBtn.addEventListener("click", deletePost);
-createOpen.addEventListener("click", makeCreateModal);
-showIndexBtn.addEventListener("click", showUserIndexPage);
+// updateBtn.addEventListener("click", updatePost);
+// deleteBtn.addEventListener("click", deletePost);
+createOpen.addEventListener("click", showCreateModal);
+// showIndexBtn.addEventListener("click", showUserIndexPage);
 
 
 //MESSAGES/ALERTS
 const wrongUserName = 'Sorry, this user does not exist.  Please check the spelling or register a new account.';
 const wrongPassword = 'Sorry, this password is incorrect';
 const nameTaken = 'Sorry, that user already exists';
+const postErrorMsg = 'Please fill in all fields and try submitting again';
 const deleteWarning = 'Are you sure you want to delete your post?';
 const updateSuccessMsg = 'Post updated!';
 const createSuccessMsg = 'Post created!';
 const deleteSuccessMsg = 'Post deleted!';
-// const loginSuccessMsg = `Welcome ${username}!  Good to see you again!`;
 // const registerSuccessMsg = `Thanks for registering, ${username}!  Welcome to the Great Outdoors`;
 
 
@@ -105,10 +124,24 @@ function serverRequest(requestURL, data, httpVerb, callback) {
 //sole purpose of this is to get bearerToken from server, so we can use it
 function logIn(event) {
     event.preventDefault();
-    userNameVal = userNameInput.value;
-    passwordVal = passwordInput.value;
-    const userVals = {username: userNameVal, password: passwordVal};
-    console.log(userNameVal);
+    if(userNameInput.value && passwordInput.value) {
+        userNameVal = userNameInput.value;
+        passwordVal = passwordInput.value;
+        const userVals = {username: userNameVal, password: passwordVal};
+        console.log(userNameVal);
+        //close loginModal
+        loginBtn.setAttribute('data-dismiss', 'modal');
+        //reveal welcome message for logged in user where loginOpen used to be
+        userWelcome.style.display = 'inline-block';
+        userWelcome.innerHTML = `Welcome ${userNameVal}`;
+        //hide loginOpen
+        loginOpen.style.display = "none"; 
+        //show hidden modalOpens
+        displayOpens();
+    } else {
+        loginTitle.innerHTML+= addModalAlert();
+    }
+
     // serverRequest('/api/login', userVals, POST, postJSON);
 
     //?postJSON switch to do a post instead of a get
@@ -121,15 +154,7 @@ function logIn(event) {
     // if(successfulLogin) {
 
     // }
-    loginOpen.style.display = "none"; 
-    // modalContent.style.display = "none"; 
-    // for(let i = 0; i < 10; i++) {
-    //     document.getElementsByClassName("modal")[i].setAttribute("data-dismiss", "modal");
-    // }
-    // loginModal.modal('hide');
-    // https://getbootstrap.com/docs/4.0/components/modal/
-    //show hiddenBtns
-    displayBtns();
+ 
 
 } //end of Login function
 
@@ -142,6 +167,11 @@ function displayBtns() {
     });
 }
 
+function displayOpens() {
+    hiddenOpens.forEach((open)=>{
+        open.style.display = 'inline-block';
+    });
+}
 
 function showRegisterForm() {
     //if registerBtn clicked, open modal form for registration
@@ -162,16 +192,11 @@ function registerNewUser(event) {
 function showUserIndexPage() {
     //only runs if user is logged in; if so, runs via "Show your posts" button
     //display modal of user's posts?  index page?
+    //make API call to retrieve user's posts from DB
+    // serverRequest()
+    //create modal displaying those?
+    //or remove from gallery all but that user's posts?
 }
-
-//if a post is clicked, or edit/delete buttons, this brings up modal of post for CRUD ops
-// function showModal() {
-//     //put code for BStrap modal here
-//     return 
-//         `
-//         <modal> etc. ${this.content}
-//         `;
-// }
 
 //runs on clicking delete button
 function deletePost() {
@@ -181,18 +206,49 @@ function deletePost() {
     //shows deleteSuccessMsg
 }
 
-function createPost() {
-  //fires when clicking createBtn inside modal
-  //if all 3 fields are filled in, then send serverRequest
-//   if() {
+function showCreateModal() {
+    createModal.style.display = 'display-block';
+}
 
-//   }
+function createPost() {
+  //if all 3 fields are filled in, then send serverRequest
+   if(titleInput.value && contentInput.value && imageUrlInput.value) {
+    //make post object consisting of the 3 fields you're passing in:
+    titleVal = titleInput.value;
+    contentVal = contentInput.value;
+    imageVal = imageUrlInput.value;
+
+    //add div element/thumbnail to gallery
+    galleryRow.innerHTML+= `
+        <div class="col-xs-12 col-sm-4 col-md-3">
+            <h3>${titleVal}</h3>
+            <a href="#" class="thumbnail">
+            <img src="${imageVal}" alt="${contentVal}">
+            </a>
+            <p>${contentVal}</p>
+        </div>
+        `;
+        createBtn.setAttribute('data-dismiss', 'modal');
+   }
+   else {
+        createModalHeader.innerHTML+= addModalAlert();
+   }
   //sends post data to POST route on DB
 //   serverRequest()
   //shows createSuccessMsg
   //adds image to gallery and to user's index page? or their DB?
-
+//   createBtn.setAttribute('data-dismiss', 'modal');
 }
+
+function addModalAlert() {
+    return `
+    <div class="alert alert-danger alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Oh snap!</strong> ${postErrorMsg}.
+    </div>
+    `;
+}
+
 
 function updatePost() {
     //fires when clicking updateBtn
@@ -205,43 +261,47 @@ function showUpdatePostForm() {
     //allows editing and submission (how?)
 }
 
-function addPostToGallery(post) {
-    //add to DB??
-    
-    //add div element/thumbnail to gallery
-    imageGallery.innerHTML+= `
-        <div class="col-xs-12 col-sm-4 col-md-3">
-            <a href="#" class="thumbnail">
-            <img src="${post.url}" alt="${post.content}">
-            </a>
-        </div>
-        `;
-}
+// function addPostToGallery() {
+//     titleVal = titleInput.value;
+//     contentVal = contentInput.value;
+//     imageVal = imageUrlInput.value;
+
+//     //add div element/thumbnail to gallery
+//     imageGallery.innerHTML+= `
+//         <div class="col-xs-12 col-sm-4 col-md-3">
+//             <h3>${titleVal}</h3>
+//             <a href="#" class="thumbnail">
+//             <img src="${imageVal}" alt="${contentVal}">
+//             </a>
+//             <p>${contentVal}</p>
+//         </div>
+//         `;
+// }
 
 // function makeCreateModal(text, httpVerb) {
-function makeCreateModal() {
-    alert('Button clicked');
-    return modalSection.innerHTML = `
-    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content" id="createmodalContent">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="createTitle">Create stuff</h5>
+// function makeCreateModal() {
+//     alert('Button clicked');
+//     return modalSection.innerHTML = `
+//     <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+//             <div class="modal-dialog" role="document">
+//               <div class="modal-content" id="createmodalContent">
+//                 <div class="modal-header">
+//                   <h5 class="modal-title" id="createTitle">Create stuff</h5>
   
-                </div>
-                <form id="createForm" action="/" method="POST"></form>
-                  <div class="modal-body">
-                      Title: <input type="text" name="title" placeholder="Title" required="true"><br>
-                      Content: <input type="text" name="content" placeholder="Content" required="true"><br>
-                      Image: <input type="text" name="image" placeholder="Image URL" required="true"><br>
-                  </div>
-                </form>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="createBtn">Create</button>
-                  </div>
-              </div>
-            </div>
-          </div>
-    `;
-}
+//                 </div>
+//                 <form id="createForm" action="/" method="POST"></form> 
+//                   <div class="modal-body">
+//                       Title: <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
+//                       Content: <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
+//                       Image: <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
+//                   </div>
+//                 </form>
+//                   <div class="modal-footer">
+//                     <button type="button" class="btn btn-primary" data-dismiss='modal' onclick="createPost()" id="createBtn">Create</button>
+//                   </div>
+//               </div>
+//             </div>
+//     </div>
+//     `;
+// }
 
