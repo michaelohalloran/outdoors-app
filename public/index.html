@@ -24,9 +24,6 @@
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" id="createOpen">
           Create new post
         </button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" id="updateOpen">
-          Update post
-        </button>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#indexModal" id="indexOpen">
           Show your posts
         </button>
@@ -59,16 +56,15 @@
               <div class="modal-content" id="modalContent">
                 <div class="modal-header">
                   <h5 class="modal-title" id="loginTitle">Login</h5>
-  
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form id="loginForm" action="/" method="POST"></form>
+                <form id="loginForm" action="/api/auth/login" method="POST"></form>
                   <div class="modal-body">
                       User Name: <input type="text" id="username" name="username" placeholder="User Name" required="true"><br>
                       Password: <input type="password" id="password" name="password" placeholder="Password" required="true"><br>
                   </div>
                 </form>
-                  <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                  <div class="modal-footer">        
                     <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
                   </div>
               </div>
@@ -81,8 +77,9 @@
               <div class="modal-content" id="createmodalContent">
                 <div class="modal-header">
                   <h5 class="modal-title" id="createModalHeader">Create a new post</h5>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form id="createForm" action="/" method="POST"></form> 
+                <form id="createForm" action="/posts" method="POST"></form> 
                   <div class="modal-body">
                       Title: <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
                       Content: <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>

@@ -13,13 +13,18 @@ body {
     width: 100px;
 }
 
-#createOpen, #updateOpen, #indexOpen, #createModal, .hiddenBtn {
+#createOpen, #indexOpen, #createModal, .hiddenBtn {
     display: none;
 }
 
-input, button {
+input {
     margin: 10px;
     padding: 5px;
+}
+
+.btn {
+    margin: 4px;
+    padding: 4px;
 }
 
 #gallery {

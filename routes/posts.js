@@ -47,7 +47,7 @@ router.get('/:id', (req, res)=> {
 });
 
 //POST new posts
-router.post('/posts', (req, res)=> {
+router.post('/', (req, res)=> {
     //check is user is logged in, if so, allow them to post new post to DB
 
     //check required fields
