@@ -21,7 +21,7 @@ const {Post} = require('../models/posts');
 //CRUD ROUTES
 //**********************************************************************************
 
-//GET all posts
+//GET all posts from /posts URL
 router.get('/', (req, res)=> {
     //retrieve all posts from DB and render them
     Post
@@ -46,7 +46,7 @@ router.get('/:id', (req, res)=> {
        });
 });
 
-//POST new posts
+//POST new posts, this goes to /posts URL
 router.post('/', (req, res)=> {
     //check is user is logged in, if so, allow them to post new post to DB
 

@@ -6,27 +6,38 @@ const jsonParser = bodyParser.json();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
-
-app.use(morgan('common'));
-app.use(jsonParser);
-app.use(bodyParser.urlencoded({ extended: true}));
-
 //import Mongoose schema
 const {Post} = require('./models/posts');
-
 //import routes
 const {router: postsRouter} = require('./routes/posts');
 const { router: usersRouter } = require('./users');
-const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
-
+const {localStrategy, jwtStrategy } = require('./auth/strategies');
 // mongoose.connect(TEST_URL);
 mongoose.Promise = global.Promise;
 //import URLs for DB
 const {TEST_URL, PORT} = require('./config.js');
 
+console.log('inside server.js before middleware');
+//MIDDLEWARE
+//this makes public holder files accessible to this app
+app.use(express.static('public'));
+app.use(morgan('common'));
+app.use(jsonParser);
+app.use(bodyParser.urlencoded({ extended: true}));
+//CORS
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+    if (req.method === 'OPTIONS') {
+      return res.send(204);
+    }
+    next();
+  });
 
-passport.use(localStrategy);
+passport.use('local', localStrategy);
 passport.use(jwtStrategy);
+const { router: authRouter} = require('./auth/router');
 app.use('/posts', postsRouter);
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
@@ -90,8 +101,6 @@ if(require.main === module) {
     runServer(TEST_URL).catch(err=>console.error(err));
 }
 
-//this makes public holder files accessible to this app
-// app.use(express.static('public'));
 
 // app.listen(process.env.PORT || 8080, function(){
 //     console.log("Server started");

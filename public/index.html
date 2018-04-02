@@ -20,6 +20,9 @@
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal" id="loginOpen">
           Login
         </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal" id="registerOpen">
+          Sign Up
+        </button>
 
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" id="createOpen">
           Create new post
@@ -66,6 +69,27 @@
                 </form>
                   <div class="modal-footer">        
                     <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REGISTERMODAL -->
+          <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content" id="registerModalContent">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="registerTitle">Sign up</h5>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form id="registerForm" action="/api/users" method="POST"></form>
+                  <div class="modal-body">
+                      User Name: <input type="text" id="newUsername" name="username" placeholder="User Name" required="true"><br>
+                      Password: <input type="password" id="newPassword" name="password" placeholder="Password" required="true"><br>
+                  </div>
+                </form>
+                  <div class="modal-footer">        
+                    <button type="button" class="btn btn-primary" id="registerBtn">Sign Up</button>
                   </div>
               </div>
             </div>
