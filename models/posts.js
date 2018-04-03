@@ -10,6 +10,7 @@ const postSchema = mongoose.Schema({
 
 postSchema.methods.serialize = function () {
     return {
+        id: this._id,
         title: this.title,
         content: this.content,
         image: this.image

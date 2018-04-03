@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-
+const passport = require('passport');
 const router = express.Router();
 
 //import URLs for DB
@@ -16,18 +16,24 @@ router.use(jsonParser);
 router.use(bodyParser.urlencoded({ extended: true}));
 
 const {Post} = require('../models/posts');
+const {localStrategy, jwtStrategy } = require('../auth/strategies');
+
+passport.use('local', localStrategy);
+passport.use(jwtStrategy);
+const jwtAuth = passport.authenticate('jwt', {session: false});
 
 //**********************************************************************************
 //CRUD ROUTES
 //**********************************************************************************
 
 //GET all posts from /posts URL
+//add jwtAuth as middleware here; this works to keep out unauthorized (but seems to keep out all right now)
 router.get('/', (req, res)=> {
     //retrieve all posts from DB and render them
     Post
         .find()
         .then(posts=> {
-            res.json(posts.map((post)=>post.serialize()));
+            res.json({data: posts.map((post)=>post.serialize())});
         })
         .catch(err=>{
             console.error(err);
@@ -74,9 +80,9 @@ router.post('/', (req, res)=> {
         });
 });
 
-//UPDATE POSTS
+//UPDATE POSTS, sends to /posts/:id
 router.put('/:id', (req, res)=> {
-    //check is user is logged in; if so, allow them to update a post by ID from DB
+    //check is user is logged in and if this post belongs to them; if so, allow them to update a post by ID from DB
 
     //check that req.body.id and req.params.id are ===?
 

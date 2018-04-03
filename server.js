@@ -44,11 +44,6 @@ app.use('/api/auth/', authRouter);
 
 const jwtAuth = passport.authenticate('jwt', {session: false});
 
-// //import middleware
-// const auth = require('./routes/auth');
-
-// let newPost = new Post({title: "Test Post 1", content: "Content here", image: "https://coloradosprings.gov/sites/default/files/styles/page_image/public/pikes_peak_highway.jpg?itok=Kqzh59pj"});
-
 //******************************************************* */
 //JWT ROUTES
 //******************************************************* */
