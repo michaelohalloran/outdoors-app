@@ -105,7 +105,7 @@ router.delete('/:id', (req, res)=> {
     //check is user is logged in; if so, allow them to delete a post
     Post
         .findByIdAndRemove(req.params.id)
-        .then(post=>res.status(204).end())
+        .then(post=>res.json({data: req.params.id}).status(204).end())
         .catch(err=>res.status(500).json({message: "Internal server error"}));
 });
 

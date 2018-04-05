@@ -35,6 +35,8 @@ const galleryRow = document.getElementsByClassName('row')[0];
 //REGISTER NEW USER INPUT FIELDS
 let newUserNameInput = document.getElementById("newUsername");
 let newPasswordInput = document.getElementById("newPassword");
+let mongooseId;
+let inputId;
 
 //CAPTURE FIELDS INSIDE CREATEPOST MODAL
 let imageUrlInput= document.getElementById('createImageURL');
@@ -218,29 +220,33 @@ function loadGallerycb(msg) {
     let postsObj = JSON.parse(msg);
     let postsArray = postsObj.data;
     postsArray.forEach((post)=> {
-        console.log(post.id);
+        // mongooseId = post.id;
         // console.log(post, typeof post);
         galleryRow.innerHTML+= `
-        <div class="col-xs-12 col-sm-4 col-md-3">
+        <div id="${post.id}" class="col-xs-12 col-sm-4 col-md-3">
             <h3>${post.title}</h3>
             <a href="#" class="thumbnail">
             <img src="${post.image}" alt="${post.title}">
             </a>
             <p>${post.content}</p><br>
-            <p>${post.id}</p><br>
-            <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#updateModal">
+            <button type="button" class="btn btn-primary updateOpens" id="${post.id}-update" data-toggle="modal" data-target="#updateModal">
                 Update post
             </button>
-            <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            <button type="button" class="btn btn-danger deleteOpens" id="${post.id}-delete" data-toggle="modal" data-target="#deleteModal">Delete</button>
         </div>
         `;
+
         //attach showUpdateModal listener to each updateOpen button as it is generated
-        updateOpens = document.querySelectorAll('.updateOpens');
-        deleteOpens = document.querySelectorAll('.deleteOpens');
-        for(let i = 0; i < updateOpens.length; i++) {
-            updateOpens[i].addEventListener('click', showUpdateModal);
-            deleteOpens[i].addEventListener('click', showDeleteModal);
-        }
+        //this binds post ID to each eventListener's callback; when you click it from here on, it remembers this unique post ID
+        // document.getElementById(`${post.id}-update`).addEventListener('click', showUpdateModal.bind(this, post.id));
+        document.getElementById(`${post.id}-delete`).addEventListener('click', showDeleteModal.bind(this, post.id));
+        
+        // var li = document.createElement('li');
+        // li.className = 'dynamic-link'; // Class name
+        // li.innerHTML = dynamicValue; // Text inside
+        // $('#links').appendChild(li); // Append it
+        // li.onclick = dynamicEvent; // Attach the event!
+
     });
 }
 
@@ -306,8 +312,8 @@ function addModalAlert(warning) {
 //DELETE FUNCTIONS
 //***************************** */
 
-function showDeleteModal(event) {
-    console.log(event);
+function showDeleteModal(postId) {
+    console.log('reached delete modal', postId);
     return modalSection.innerHTML = `
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -319,37 +325,41 @@ function showDeleteModal(event) {
                     <strong>${deleteWarning}</strong>.
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="deletePost()" id="deleteBtn">Delete</button>
+                <button type="button" class="btn btn-primary" id="deleteBtn">Delete</button>
                 </div>
             </div>
         </div>
     </div>
     `;
-    
     deleteBtn = document.getElementById("deleteBtn");
-    deleteBtn.addEventListener("click", deletePost);
+    deleteBtn.addEventListener("click", deletePost.bind(this, postId));
 }
-//runs on clicking delete button
-// function deletePost() {
-//     alert('clicked delete');
-//     //if clicked, delete this post from DB
-//     serverRequest('/posts'+, "GET", deletecb);
-// }
 
 function deletecb(msg) {
+    console.log('reached delete cb');
+    console.log(msg);
     let postObj = JSON.parse(msg);
-    let postArray = postObj.data;
-    let ids = [];
-    for(let i = 0; i < postArray.length; i++) {
-        ids.push(postArray[i].id);
-    }
-    console.log(ids);
+    let postId = postObj.data.id;
+    // let ids = [];
+    // for(let i = 0; i < postArray.length; i++) {
+    //     ids.push(postArray[i].id);
+    // }
+    // console.log(ids);
+    // mongooseId = postArray[0].id;
     // console.log(postArray);
     // console.log(postArray[0]);
     // //this returns the ID):
     // console.log(postArray[0].id);
 
 }
+//runs on clicking delete button
+function deletePost(postId) {
+    console.log('reached delete post');
+    //if clicked, delete this post from DB
+    serverRequest('/posts/:'+postId, "DELETE", deletecb);
+}
+
+
 function addDeleteWarning() {
     return `
     <div class="alert alert-danger alert-dismissible">
