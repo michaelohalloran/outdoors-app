@@ -3,6 +3,15 @@ body {
     text-align: center;
 }
 
+body * {
+    box-sizing: border-box;
+}
+
+#imageContainer {
+    background: url('https://i.pinimg.com/originals/d1/4f/f2/d14ff2dabf433616b1742b38b7cee931.jpg') no-repeat center center fixed;
+    background-size: cover;
+    height: 400px;
+}
 #userWelcome {
     display: none;
 }
@@ -20,6 +29,7 @@ body {
 input {
     margin: 10px;
     padding: 5px;
+    width: 80%;
 }
 
 .btn {
@@ -27,22 +37,47 @@ input {
     padding: 4px;
 }
 
+
+/* ******************************************************************
+IMAGE STYLES
+****************************************************************** */
+
 #gallery {
-    margin-right: auto;
-    margin-left: auto;
+    /* margin-right: auto;
+    margin-left: auto; */
+    /* width: 100vw; */
 }
 .row {
     /* display: flex;
     flex-wrap: wrap;
-    justify-content: center; */
+    justify-content: center;
     text-align: center;
     margin-right: auto;
-    margin-left: auto;
+    margin-left: auto; */
+    margin: 0;
+    padding: 0;
+    /* width: 100vw; */
 }
 
+.postItem {
+    border: 1px solid grey;
+    border-radius: 3px;
+    box-shadow: 0 0 3px grey;
+    /* background-color: grey; */
+    margin: 0;
+}
+
+/* .postItem > img {
+    height: 150px;
+    display: block;
+} */
+
 img {
-    margin: 5px;
-    width: 200px;
+    margin: 1px;
+    /* width: 200px;
+    height: 200px; */
+    width: 25vw;
+    height: 25vh;
     transition: all 1s;
 }
 img:hover {
