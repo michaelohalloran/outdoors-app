@@ -7,18 +7,90 @@ body * {
     box-sizing: border-box;
 }
 
-#imageContainer {
+/* #imageContainer {
     background: url('https://i.pinimg.com/originals/d1/4f/f2/d14ff2dabf433616b1742b38b7cee931.jpg') no-repeat center center fixed;
     background-size: cover;
     height: 400px;
+} */
+
+#topContainer {
+    z-index: 1;
+    position: relative;
 }
+
+.slideshow {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    list-style: none;
+    z-index: 0;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+}
+
+.slideshow li {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    z-index: 0;
+    opacity: 0;
+    animation: imageShow 25s linear infinite;
+    /* top: 0;
+    left: 0; */
+}
+
+.slideshow li:nth-child(1) {
+    background-image: url('https://i.pinimg.com/originals/d1/4f/f2/d14ff2dabf433616b1742b38b7cee931.jpg');
+}
+.slideshow li:nth-child(2) {
+    background-image: url('https://c1.staticflickr.com/8/7415/9448609846_c47a62b97a_b.jpg');
+    animation-delay: 5s;
+}
+.slideshow li:nth-child(3) {
+    background-image: url('https://www.mountainphotography.com/images/xl/20100822-Uncompahgre-Sunset.jpg');
+    animation-delay: 10s;
+}
+.slideshow li:nth-child(4) {
+    background-image: url('http://www.carolinacremation.com/versionone/wp-content/uploads/2011/11/SUNSET-MOUNTAIN-RANGE-PHOTO.jpg');
+    animation-delay: 15s;
+}
+.slideshow li:nth-child(5) {
+    background-image: url('https://c1.staticflickr.com/6/5548/30289276832_b384d2a6da_b.jpg');
+    animation-delay: 20s;
+}
+
+@keyframes imageShow {
+    0% {
+        opacity: 0;
+        animation-timing-function: linear;
+    }
+    10% {
+        opacity: 1;
+        animation-timing-function: linear;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 0;
+    }
+
+}
+
 #userWelcome {
     display: none;
 }
+
 #loginOpen {
     text-align: center;
     display: inline-block;
-    height: 60px;
     width: 100px;
 }
 
@@ -42,11 +114,11 @@ input {
 IMAGE STYLES
 ****************************************************************** */
 
-#gallery {
-    /* margin-right: auto;
-    margin-left: auto; */
-    /* width: 100vw; */
-}
+/* #gallery {
+    margin-right: auto;
+    margin-left: auto; 
+     width: 100vw;
+} */
 .row {
     /* display: flex;
     flex-wrap: wrap;
@@ -63,7 +135,7 @@ IMAGE STYLES
     border: 1px solid grey;
     border-radius: 3px;
     box-shadow: 0 0 3px grey;
-    /* background-color: grey; */
+    background-color: #f1f1f1;
     margin: 0;
 }
 

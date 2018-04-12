@@ -93,11 +93,19 @@ router.put('/:id', (req, res)=> {
             toUpdate[field] = req.body[field];
         };
     })
+    console.log('id you pass is ', req.params.id);
+    console.log('type of this id is', typeof req.params.id);
+    let mongooseId = mongoose.Types.ObjectId(req.params.id);
+    console.log('check if this converts it: ', mongooseId);
+    console.log('type of mongoose ID is ', typeof mongooseId);
 
     Post
-        .findByIdAndUpdate(req.params.id, {$set: toUpdate})
-        .then(res.status(204).end())
-        .catch(err=>res.status(500).json({message: "Internal server error"}));
+        .findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
+        .then(updatedPost=> res.json(updatedPost).status(204).end())
+        .catch(err=>{
+            console.error(err);
+            res.status(500).json({message: "Internal server error"});
+        });
 });
 
 //DELETE POSTS

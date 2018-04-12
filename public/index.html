@@ -14,24 +14,30 @@
   </head>
   <body>
   
-    <div id="imageContainer">
+    <div id="topContainer">
       <h1>The Great Outdoors</h1>
-        <!-- Modal Opens -->
-        <p id="userWelcome">Welcome</p>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal" id="loginOpen">
-          Login
-        </button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal" id="registerOpen">
-          Sign Up
-        </button>
+      <!-- Modal Opens -->
+      <p id="userWelcome">Welcome</p>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal" id="loginOpen">
+        Login
+      </button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal" id="registerOpen">
+        Sign Up
+      </button>
 
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" id="createOpen">
-          Create new post
-        </button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#indexModal" id="indexOpen">
-          Show your posts
-        </button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" id="createOpen">
+        Create new post
+      </button>
     </div>
+    
+
+      <ul class="slideshow">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
 
         <section id="gallery">
           <!-- //retrieve current posts w/API call  -->
@@ -63,12 +69,10 @@
                   <h5 class="modal-title" id="loginTitle">Login</h5>
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form id="loginForm" action="/api/auth/login" method="POST"></form>
-                  <div class="modal-body">
-                      User Name:<br> <input type="text" id="username" name="username" placeholder="User Name" required="true"><br>
-                      Password:<br> <input type="password" id="password" name="password" placeholder="Password" required="true"><br>
-                  </div>
-                </form>
+                <div class="modal-body">
+                    User Name:<br> <input type="text" id="username" name="username" placeholder="User Name" required="true"><br>
+                    Password:<br> <input type="password" id="password" name="password" placeholder="Password" required="true"><br>
+                </div>
                   <div class="modal-footer">        
                     <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
                   </div>
@@ -84,12 +88,10 @@
                   <h5 class="modal-title" id="registerTitle">Sign up</h5>
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form id="registerForm" action="/api/users" method="POST"></form>
-                  <div class="modal-body">
-                      User Name: <input type="text" id="newUsername" name="username" placeholder="User Name" required="true"><br>
-                      Password: <input type="password" id="newPassword" name="password" placeholder="Password" required="true"><br>
-                  </div>
-                </form>
+                <div class="modal-body">
+                    User Name: <input type="text" id="newUsername" name="username" placeholder="User Name" required="true"><br>
+                    Password: <input type="password" id="newPassword" name="password" placeholder="Password" required="true"><br>
+                </div>
                   <div class="modal-footer">        
                     <button type="button" class="btn btn-primary" id="registerBtn">Sign Up</button>
                   </div>
@@ -105,13 +107,11 @@
                   <h5 class="modal-title" id="createModalHeader">Create a new post</h5>
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form id="createForm" action="/posts" method="POST"></form> 
-                  <div class="modal-body">
-                      Title: <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
-                      Content: <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
-                      Image: <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
-                  </div>
-                </form>
+                <div class="modal-body">
+                    Title: <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
+                    Content: <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
+                    Image: <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
+                </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="createBtn">Create</button>
                   </div>

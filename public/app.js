@@ -61,7 +61,7 @@ registerBtn.addEventListener("click", registerNewUser);
 createBtn.addEventListener("click", createPost);
 // updateBtn.addEventListener("click", updatePost);
 createOpen.addEventListener("click", showCreateModal);
-// updateOpen.addEventListener("click", showUpdateModal);
+// updateOpen.addEventListener("click", appendUpdateModal);
 
 
 //MESSAGES/ALERTS
@@ -245,18 +245,19 @@ function loadGallerycb(msg) {
             <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${post.id}-updateModal">
                 Update post
             </button>
-            <button type="button" class="btn btn-danger deleteOpens" id="${post.id}-delete" data-toggle="modal" data-target="#deleteModal${post.id}">Delete</button>
+            <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${post.id}-deleteModal">Delete</button>
         </div>
         `;
-        showUpdateModal(post);
-        //attach showUpdateModal listener to each updateOpen button as it is generated
+        appendUpdateModal(post);
+        // appendDeleteModal(post);
+        //attach appendUpdateModal listener to each updateOpen button as it is generated
         //this binds post ID to each eventListener's callback; when you click it from here on, it remembers this unique post ID
-        // document.getElementById(`${post.id}-update`).addEventListener('click', showUpdateModal.bind(this, post.id));
-        // document.getElementById(`${post.id}-delete`).addEventListener('click', showDeleteModal.bind(this, post.id));
-        let deleteOpens = document.getElementsByClassName('deleteOpens')
-        for(let i = 0; i<deleteOpens.length; i++) {
-            deleteOpens[i].addEventListener('click', showDeleteModal);
-        }
+        // document.getElementById(`${post.id}-update`).addEventListener('click', appendUpdateModal.bind(this, post.id));
+        // document.getElementById(`${post.id}-delete`).addEventListener('click', appendDeleteModal.bind(this, post.id));
+        // let deleteOpens = document.getElementsByClassName('deleteOpens')
+        // for(let i = 0; i<deleteOpens.length; i++) {
+        //     deleteOpens[i].addEventListener('click', appendDeleteModal);
+        // }
 
         // var li = document.createElement('li');
         // li.className = 'dynamic-link'; // Class name
@@ -273,7 +274,7 @@ function loadGallerycb(msg) {
 //     for(let i = 0; i < opens.length; i++) {
 //         opens.push(document.getElementsByClassName(`${open}`)[i]);
 //     }
-//     open.addEventListener('click', showUpdateModal);
+//     open.addEventListener('click', appendUpdateModal);
 // }
 
 // window.addEventListener('load', loadGallery);
@@ -299,7 +300,7 @@ function createPost() {
             <img src="${imageVal}" alt="${contentVal}">
             </a>
             <p>${contentVal}</p><br>
-            <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#updateModal" onclick="showUpdateModal">
+            <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#updateModal" onclick="appendUpdateModal">
                 Update post
             </button>
             <button type="button" class="btn btn-danger deleteBtns">Delete</button>
@@ -328,13 +329,13 @@ function addModalAlert(warning) {
 //***************************** */
 //DELETE FUNCTIONS
 //***************************** */
-// function showDeleteModal(postId)
-function showDeleteModal() {
+// fires when clicking deleteOpen
+function appendDeleteModal(post) {
     // console.log('reached delete modal', postId);
-    console.log('reached delete modal');
+    // console.log('appended delete modal');
     //other way: id="deleteModal${postId}"
-    return modalSection.innerHTML = `
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    return modalSection.innerHTML += `
+    <div class="modal fade" id="${post.id}-deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content" id="deletemodalContent">
                 <div class="modal-header">
@@ -394,7 +395,9 @@ function addDeleteWarning() {
 //***************************** */
 //UPDATE FUNCTIONS
 //***************************** */
-function showUpdateModal(post) {
+function appendUpdateModal(post) {
+    // console.log('append updateModal fired');
+    // console.log('post to be updated is: ', post);
     //fires when clicking updateOpen
     //its interior updateBtn fires updatePost to redo DOM, also fires serverRequest (PUT)
     modalSection.innerHTML += `
@@ -420,19 +423,18 @@ function showUpdateModal(post) {
     // document.getElementById(`${post.id}updateBtn`).addEventListener('click', updatePost.bind(this, post.id));
 }
 
+//fires when clicking updateBtn inside updateModal, updates DOM and DB
 function updatePost(postId) {
-
+    console.log(`clicked updatePost; updating post ${postId}`);
+    //get the ID of the modal body which you're about to update
     let modalId = `${postId}-modalBody`;
-    //use this to find 
+    //in the DOM, each post item is a div with an id and all title/image content; the following grabs
+    //the specific post we are in process of updating
     let postItem = document.getElementById(`${postId}`);
 
     //get modal content by modalId, then find its individual inputs inside it by using updateTitle, updateContent id's
     //use .find('#updateTitle').value, etc. or .children
-
-    //fires when clicking updateBtn
-    //get ID of post clicked on
-
-    //sends updated data to PUT route on DB
+    
     //grab updateBtn
 
     const updateBtn = document.getElementById(`${postId}updateBtn`);
@@ -440,7 +442,7 @@ function updatePost(postId) {
     updatedTitle = document.getElementById(`${postId}updateTitle`).value;
     updatedContent = document.getElementById(`${postId}updateContent`).value;
     let updatedPost = {id: postId, title: updatedTitle, content: updatedContent, image: updatedImage};
-    console.log(updatedPost, updateBtn);
+    console.log('updatedPost is: ', updatedPost);
     
     // FIX BUTTON IDS
     postItem.innerHTML = `
@@ -455,11 +457,30 @@ function updatePost(postId) {
             <button type="button" class="btn btn-danger deleteBtns">Delete</button>
         `;
         updateBtn.setAttribute('data-dismiss', 'modal');
-        // serverRequest('/posts/:${postId}', "PUT", serverRequestcb, updatedPostObj);
+
+        //sends updated data to PUT route on DB
+        serverRequest(`/posts/${postId}`, "PUT", updatecb, updatedPost);
 
 //    else {
 //         createModalHeader.innerHTML+= addModalAlert();
 //    }
+}
+
+function updatecb(msg, data) {
+    console.log('reached updatecb');
+    msg = JSON.parse(msg);
+    console.log('msg data', msg);
+    console.log('data', data);
+
+    // // loginBtn.setAttribute('data-dismiss', 'modal');
+    // //welcome message display   
+    // welcomeUser(data.username);
+    // //hide login and register modal Open btns
+    // hideLogins();
+    // //load all posts
+    // loadGallery();
+    // //show hidden createPost modal open button
+    // createOpen.style.display = 'inline-block';  
 }
 
 
