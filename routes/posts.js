@@ -28,7 +28,7 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 
 //GET all posts from /posts URL
 //add jwtAuth as middleware here; this works to keep out unauthorized (but seems to keep out all right now)
-router.get('/', (req, res)=> {
+router.get('/', jwtAuth, (req, res)=> {
     //retrieve all posts from DB and render them
     Post
         .find()
@@ -53,7 +53,7 @@ router.get('/:id', (req, res)=> {
 });
 
 //POST new posts, this goes to /posts URL
-router.post('/', (req, res)=> {
+router.post('/', jwtAuth, (req, res)=> {
     //check is user is logged in, if so, allow them to post new post to DB
 
     //check required fields
@@ -81,7 +81,7 @@ router.post('/', (req, res)=> {
 });
 
 //UPDATE POSTS, sends to /posts/:id
-router.put('/:id', (req, res)=> {
+router.put('/:id', jwtAuth, (req, res)=> {
     //check is user is logged in and if this post belongs to them; if so, allow them to update a post by ID from DB
 
     //check that req.body.id and req.params.id are ===?
@@ -109,7 +109,7 @@ router.put('/:id', (req, res)=> {
 });
 
 //DELETE POSTS
-router.delete('/:id', (req, res)=> {
+router.delete('/:id', jwtAuth, (req, res)=> {
     //check is user is logged in; if so, allow them to delete a post
     Post
         .findByIdAndRemove(req.params.id)

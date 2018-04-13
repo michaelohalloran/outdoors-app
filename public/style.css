@@ -94,7 +94,7 @@ body * {
     width: 100px;
 }
 
-#createOpen, #indexOpen, #createModal, .hiddenBtn {
+#createOpen {
     display: none;
 }
 

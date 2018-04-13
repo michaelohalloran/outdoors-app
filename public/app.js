@@ -1,25 +1,13 @@
-//flow: log in (or register), have all posts show, along w/ update/delete buttons, and createNewPost
-
-//functions needed: logUserIn, registerUser, showRegisterForm, displayBtns, showIndexPage, create/edit/updatePosts, 
-//checkPassword, checkUserName, showCreatePostForm, showUpdatePostForm, addPostToGallery, serverRequest
-
-//misc questions: Forgotten password? (send email?)
-//how to distinguish wrong password (i.e., existing user) from misspelled username?  
-
-
-let loggedIn = false;
 let authToken;
 
 //BUTTONS
-const loginTitle = document.getElementById('loginTitle');
 const loginBtn = document.getElementById("loginBtn");
-const loginOpen = document.getElementById("loginOpen");
 const registerBtn = document.getElementById("registerBtn");
-const registerTitle = document.getElementById('registerTitle');
 const createBtn = document.getElementById("createBtn");
 let deleteBtn;
 
 //MODALS AND OPENS
+const loginOpen = document.getElementById("loginOpen");
 const createOpen = document.getElementById("createOpen");
 let updateOpens;
 let deleteOpens;
@@ -28,6 +16,8 @@ const createModal = document.getElementById('createModal');
 const createModalHeader = document.getElementById('createModalHeader');
 
 //INPUT FIELDS
+const loginTitle = document.getElementById('loginTitle');
+const registerTitle = document.getElementById('registerTitle');
 let userNameInput = document.getElementById("username");
 let passwordInput = document.getElementById("password");
 const userWelcome = document.getElementById('userWelcome');
@@ -40,12 +30,12 @@ let mongooseId;
 let inputId;
 
 //CAPTURE FIELDS INSIDE CREATEPOST MODAL
-let imageUrlInput= document.getElementById('createImageURL');
-let titleInput= document.getElementById('createTitle');
-let contentInput= document.getElementById('createContent');
-let titleVal;
-let contentVal;
-let imageVal;
+let elImageUrl= document.getElementById('createImageURL');
+let elTitle= document.getElementById('createTitle');
+let elContent= document.getElementById('createContent');
+let title;
+let content;
+let image;
 
 //CAPTURE FIELDS INSIDE UPDATEPOST MODAL
 let updateImageInput= document.getElementById('updateImageURL');
@@ -59,9 +49,7 @@ let updatedImage;
 loginBtn.addEventListener("click", logIn);
 registerBtn.addEventListener("click", registerNewUser);
 createBtn.addEventListener("click", createPost);
-// updateBtn.addEventListener("click", updatePost);
-createOpen.addEventListener("click", showCreateModal);
-// updateOpen.addEventListener("click", appendUpdateModal);
+// createOpen.addEventListener("click", showCreateModal);
 
 
 //MESSAGES/ALERTS
@@ -70,90 +58,57 @@ const wrongPassword = 'Sorry, this password is incorrect';
 const nameTaken = 'Sorry, that user already exists';
 const postErrorMsg = 'Please fill in all fields and try submitting again';
 const deleteWarning = 'Are you sure you want to delete your post?';
-// const registerSuccessMsg = `Thanks for registering, ${username}!  Welcome to the Great Outdoors`;
 
+function serverRequest(requestURL, httpVerb, data) {
+    //data parameter is the data I'm sending
+    return new Promise((resolve, reject)=> { 
+        
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            //readyState of 4 means done; check if it's done, then if the status is OK (200)
+            if(this.readyState == 4) {
+                if(this.status == 200) {
+                    // console.log(this.responseText);
+                    //resolve is to promises what callback is to the callback method; this is what executes when doing a .then
+                    //this parses what comes back back from the server; JSON.parse takes string and makes it into JSON
+                    //data is any data I may be sending
+                    resolve(JSON.parse(this.responseText), data);
+                } else {
+                    reject(this.status, this.responseType, this.statusText);
+                }
+            }
+        };
 
-//make function to be usable everywhere that attaches bearerToken to all requests
-//this is like making our own getJSON
-//serverRequest will reuse bearerToken, attach it to all requests going forward
-//this method allows us to attach bearerToken to all getJSON calls, which is a functionality regular getJSON
-//doesn't have
-//if success, change loggedIn to = true
-// function serverRequest(requestURL, data, httpVerb, callback) {
-//     //api/login will be the requestURL, or api/posts, etc.
-//     //data can be $ajax, etc.
-//     //also need httpVerb (GET, POST, etc.)
-//     //callback does this without promises, callback will process data
-//     //or you can return promise with $.getJSON
-//     //httpVerb is built in to getJSON, but in .ajax this is under the type: 
-//     // $.getJSON(requestURL, function(data) {
-//     //     return data from serverRequest
-//     //     callback(data); //if data was successfully returned, so have an if/else setup
-//     //     will be returned wherever it was called
-//     //     this can now be run inside logIn, with a globally set 
-//     // })
-
-//     // switch(httpVerb) {
-//     //     case "GET" : 
-//     //         return 
-        
-//     //     case "POST" : 
-//     //         return 
-        
-//     //     case "PUT" : 
-//     //         return 
-        
-//     //     case "DELETE" : 
-//     //         return 
-        
-//     //     default: 
-//     //         console.log("Not a valid HTTP request");
-//     // }
-// }
-
-function serverRequest(requestURL, httpVerb, callback, data) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            callback(this.responseText, data);
+        xhttp.open(httpVerb, requestURL, true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+    
+        if(authToken && authToken.length > 0) {
+            xhttp.setRequestHeader("Authorization", `Bearer ${authToken}`);
         }
-    };
-    xhttp.open(httpVerb, requestURL, true);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    if(loggedIn) {
-        xhttp.setRequestHeader("Authorization", `Bearer ${authToken}`);
-    }
-    if(data) {
-        xhttp.send(JSON.stringify(data));
-    } else {
-        xhttp.send();
-    }
+
+        if(data) {
+            xhttp.send(JSON.stringify(data));
+        } else {
+            //if not sending data, at least still send the request
+            xhttp.send();
+        }
+    });
 }
 
-//this logs the data captured via the server request (this is the callback run in the function right above)
-function serverRequestcb(msg, data) {
-    console.log(msg);
-    msg = JSON.parse(msg);
-    authToken = msg.authToken;
-    console.log('authToken is',authToken);
-    //if it gets to this point, user is successfully logged in
-    loggedIn = true;
-    
-    //close loginModal
-    $('#loginModal').modal('hide');
-
-    // loginBtn.setAttribute('data-dismiss', 'modal');
+//this consumes the data returned in serverRequest
+//specifically: it saves the authToken we just grabbed, and also cleans up the UI once you log in
+function handleLogin(responseObj, sentData) {
+    authToken = responseObj.authToken;
+    console.log('authToken is',authToken)
     //welcome message display   
-    welcomeUser(data.username);
+    welcomeUser(sentData.username);
     //hide login and register modal Open btns
     hideLogins();
-    //load all posts
-    loadGallery();
     //show hidden createPost modal open button
     createOpen.style.display = 'inline-block';   
 }
 
-//sole purpose of this is to get bearerToken from server, so we can use it
+//this checks if person has entered logIn data, if so logs them in w/ server call
 function logIn(event) {
     event.preventDefault();
     let userNameVal;
@@ -164,29 +119,20 @@ function logIn(event) {
         passwordVal = passwordInput.value;
         userVals = {username: userNameVal, password: passwordVal};
         //log this user in w/ DB call
-        serverRequest('/api/auth/login', "POST", serverRequestcb, userVals);
+        serverRequest('/api/auth/login', "POST", userVals)
+            .then((data)=> {
+                console.log(data);
+                handleLogin(data, userVals);
+                //close loginModal
+                $('#loginModal').modal('hide');
+                //load all posts, after a successful login (this is happening in .then, meaning it was successful or else we would be in .catch)
+                loadGallery();
+            });
     } else {
         //if user hasn't input username or password, give them a warning
         loginTitle.innerHTML+= addModalAlert(postErrorMsg);
     }
 } //end of Login function
-
-function checkPassword() {
-    //run this inside logIn
-    //find user in DB by passing in userNameInput
-
-    let userNameToCheck;
-    userNameToCheck = userNameInput.value;
-    //check his password with what was just entered
-    
-    let passwordToCheck;
-    passwordToCheck = passwordInput.value;
-
-    //if they don't match, give warning message and keep login open
-    //if they match, go to next()
-
-
-}
 
 function registerNewUser(event) {
     event.preventDefault();
@@ -198,15 +144,14 @@ function registerNewUser(event) {
         newPasswordVal = newPasswordInput.value;
         newUserVals = {username: newUserNameVal, password: newPasswordVal};
         //register this user
-        serverRequest('/api/users', "POST", serverRequestcb, newUserVals);
-        //close registerModal
-        registerBtn.setAttribute('data-dismiss', 'modal');
-        //welcome message display   
-        welcomeUser(newUserNameVal);
-        //hide login and register modal Open btns
-        hideLogins();
-        //show hidden createPost modal open button
-        createOpen.style.display = 'inline-block';
+        serverRequest('/api/users', "POST", newUserVals)
+            .then((data)=> {
+                handleLogin(data, newUserVals);
+                //load all posts
+                loadGallery();
+                //close registerModal
+                registerBtn.setAttribute('data-dismiss', 'modal');
+            });
     } else {
         registerTitle.innerHTML+= addModalAlert(postErrorMsg);
     }    
@@ -225,96 +170,80 @@ function hideLogins() {
 }
 
 function loadGallery() {
-    serverRequest('/posts', "GET", loadGallerycb);
-}
-
-function loadGallerycb(msg) {
-    let postsObj = JSON.parse(msg);
-    let postsArray = postsObj.data;
-    modalSection.innerHTML = ''; //everytime we load a new gallery, remove any outstanding modals
-    postsArray.forEach((post)=> {
-        // mongooseId = post.id;
-        // console.log(post, typeof post);
-        galleryRow.innerHTML+= `
-        <div id="${post.id}" class="col-xs-12 col-sm-6 col-md-4 postItem">
-            <h3>${post.title}</h3>
-            <div class="thumbnail">
-            <img src="${post.image}" alt="${post.title}">
+    serverRequest('/posts', "GET")
+    .then((postsObj)=> {
+        let postsArray = postsObj.data;
+        modalSection.innerHTML = ''; //everytime we load a new gallery, remove any outstanding modals
+        // appendCreateModal();
+        postsArray.forEach((post)=> {
+            // mongooseId = post.id;
+            // console.log(post, typeof post);
+            galleryRow.innerHTML+= `
+            <div id="${post.id}" class="col-xs-12 col-sm-6 col-md-4 postItem">
+                <h3>${post.title}</h3>
+                <div class="thumbnail">
+                <img src="${post.image}" alt="${post.title}">
+                </div>
+                <p>${post.content}</p>
+                <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${post.id}-updateModal">
+                    Update post
+                </button>
+                <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${post.id}-deleteModal">Delete</button>
             </div>
-            <p>${post.content}</p>
-            <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${post.id}-updateModal">
-                Update post
-            </button>
-            <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${post.id}-deleteModal">Delete</button>
-        </div>
-        `;
-        appendUpdateModal(post);
-        // appendDeleteModal(post);
-        //attach appendUpdateModal listener to each updateOpen button as it is generated
-        //this binds post ID to each eventListener's callback; when you click it from here on, it remembers this unique post ID
-        // document.getElementById(`${post.id}-update`).addEventListener('click', appendUpdateModal.bind(this, post.id));
-        // document.getElementById(`${post.id}-delete`).addEventListener('click', appendDeleteModal.bind(this, post.id));
-        // let deleteOpens = document.getElementsByClassName('deleteOpens')
-        // for(let i = 0; i<deleteOpens.length; i++) {
-        //     deleteOpens[i].addEventListener('click', appendDeleteModal);
-        // }
-
-        // var li = document.createElement('li');
-        // li.className = 'dynamic-link'; // Class name
-        // li.innerHTML = dynamicValue; // Text inside
-        // $('#links').appendChild(li); // Append it
-        // li.onclick = dynamicEvent; // Attach the event!
-
+            `;
+            appendUpdateModal(post);
+            appendDeleteModal(post);
+            //attach appendUpdateModal listener to each updateOpen button as it is generated
+            //this binds post ID to each eventListener's callback; when you click it from here on, it remembers this unique post ID
+            // document.getElementById(`${post.id}-update`).addEventListener('click', appendUpdateModal.bind(this, post.id));
+            // document.getElementById(`${post.id}-delete`).addEventListener('click', appendDeleteModal.bind(this, post.id));
+            // let deleteOpens = document.getElementsByClassName('deleteOpens')
+            // for(let i = 0; i<deleteOpens.length; i++) {
+            //     deleteOpens[i].addEventListener('click', appendDeleteModal);
+            // }
+        });
     });
 }
 
-// function addModalOpenListeners(open) {
-//     //$$$$$$$$$$$$$$$$$$$define opens below
-//     //open is the name of an array of opens sharing the same class name
-//     for(let i = 0; i < opens.length; i++) {
-//         opens.push(document.getElementsByClassName(`${open}`)[i]);
-//     }
-//     open.addEventListener('click', appendUpdateModal);
-// }
-
-// window.addEventListener('load', loadGallery);
-
-function showCreateModal() {
-    createModal.style.display = 'display-block';
-}
-
 function createPost() {
+    console.log('createBtn clicked and createPost called');
   //if all 3 fields are filled in, then send serverRequest
-   if(titleInput.value && contentInput.value && imageUrlInput.value) {
-    //make post object consisting of the 3 fields you're passing in:
-    titleVal = titleInput.value;
-    contentVal = contentInput.value;
-    imageVal = imageUrlInput.value;
-    let newPostObj = {title: titleVal, content: contentVal, image: imageVal};
+   if(elTitle.value.length > 0 && elContent.value.length > 0 && elImageUrl.value.length > 0) {
 
-    //add div element/thumbnail to gallery
-    galleryRow.innerHTML+= `
-        <div class="col-xs-12 col-sm-4 col-md-3">
-            <h3>${titleVal}</h3>
-            <a href="#" class="thumbnail">
-            <img src="${imageVal}" alt="${contentVal}">
-            </a>
-            <p>${contentVal}</p><br>
-            <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#updateModal" onclick="appendUpdateModal">
-                Update post
-            </button>
-            <button type="button" class="btn btn-danger deleteBtns">Delete</button>
-        </div>
-        `;
-        createBtn.setAttribute('data-dismiss', 'modal');
+        //make post object consisting of the 3 fields you're passing in:
+        title = elTitle.value;
+        content = elContent.value;
+        image = elImageUrl.value;
+        let newPost = {title: title, content: content, image: image};
+
         //sends post data to POST route on DB
-        serverRequest('/posts', "POST", serverRequestcb, newPostObj);
-        //adds image to user's index page?
-        
-   }
-   else {
-        createModalHeader.innerHTML+= addModalAlert(postErrorMsg);
-   }
+        serverRequest('/posts', "POST", newPost)
+        .then((newPost)=> {
+            //add div element/thumbnail to gallery
+            console.log('new post is: ', newPost);
+            galleryRow.innerHTML+= `
+            <div id="${newPost._id}" class="col-xs-12 col-sm-6 col-md-4 postItem">
+                <h3>${newPost.title}</h3>
+                <div class="thumbnail">
+                <img src="${newPost.image}" alt="${newPost.title}">
+                </div>
+                <p>${newPost.content}</p>
+                <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${newPost._id}-updateModal">
+                    Update post
+                </button>
+                <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${newPost._id}-deleteModal">Delete</button>
+            </div>
+            `;
+            $('#createModal').modal('hide');
+            // createBtn.setAttribute('data-dismiss', 'modal');      
+        })
+        .catch((err)=> {
+            createModalHeader.innerHTML= addModalAlert(`Server returned ${err}`);
+        }); 
+    }
+    else {
+         createModalHeader.innerHTML= addModalAlert(postErrorMsg);
+    }
 }//end of createPost function
 
 function addModalAlert(warning) {
@@ -334,7 +263,7 @@ function appendDeleteModal(post) {
     // console.log('reached delete modal', postId);
     // console.log('appended delete modal');
     //other way: id="deleteModal${postId}"
-    return modalSection.innerHTML += `
+    modalSection.innerHTML += `
     <div class="modal fade" id="${post.id}-deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content" id="deletemodalContent">
@@ -352,35 +281,38 @@ function appendDeleteModal(post) {
     </div>
     `;
     deleteBtn = document.getElementById("deleteBtn");
-    console.log('showing deleteBtn exists ' + deleteBtn);
+    // console.log('showing deleteBtn exists ' + deleteBtn);
     // deleteBtn.addEventListener("click", deletePost.bind(this, postId));
-    deleteBtn.addEventListener("click", deletePost);
+    deleteBtn.addEventListener("click", deletePost.bind(this, post.id));
 }
 
 //runs on clicking delete button
 // function deletePost(postId) {
-function deletePost() {
-    console.log('reached delete post');
+function deletePost(postId) {
+    console.log('reached delete post and we have the ID to delete', postId);
     //if clicked, delete this post from DB
-    serverRequest('/posts/:'+postId, "DELETE", deletecb);
-}
+    serverRequest('/posts/'+postId, "DELETE")
+    .then((postObj)=>{
+        console.log('reached delete cb');
+        //my backend route still returns the ID as data object, even though it's deleted
+        let postId = postObj.data.id;
 
-function deletecb(msg) {
-    console.log('reached delete cb');
-    console.log(msg);
-    let postObj = JSON.parse(msg);
-    let postId = postObj.data.id;
-    // let ids = [];
-    // for(let i = 0; i < postArray.length; i++) {
-    //     ids.push(postArray[i].id);
-    // }
-    // console.log(ids);
-    // mongooseId = postArray[0].id;
-    // console.log(postArray);
-    // console.log(postArray[0]);
-    // //this returns the ID):
-    // console.log(postArray[0].id);
+        //DELETE FROM DOM
+        //find this ID in the DOM, ${postID}-blah, remove it
+        let postItem = document.getElementById(`${postId}`);
+        postItem.remove();
 
+        // let ids = [];
+        // for(let i = 0; i < postArray.length; i++) {
+        //     ids.push(postArray[i].id);
+        // }
+        // console.log(ids);
+        // mongooseId = postArray[0].id;
+        // console.log(postArray);
+        // console.log(postArray[0]);
+        // //this returns the ID):
+        // console.log(postArray[0].id);
+    });
 }
 
 function addDeleteWarning() {
@@ -392,14 +324,13 @@ function addDeleteWarning() {
     `;
 }
 
-//***************************** */
+//*************************************************************************************** */
 //UPDATE FUNCTIONS
-//***************************** */
+//*************************************************************************************** */
+//fires when clicking updateOpen; its interior updateBtn fires updatePost to redo DOM, also fires serverRequest (PUT)
 function appendUpdateModal(post) {
-    // console.log('append updateModal fired');
-    // console.log('post to be updated is: ', post);
-    //fires when clicking updateOpen
-    //its interior updateBtn fires updatePost to redo DOM, also fires serverRequest (PUT)
+    // console.log('append updateModal fired; post to be updated is: ', post);
+    
     modalSection.innerHTML += `
     <div class="modal fade" id="${post.id}-updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -443,52 +374,71 @@ function updatePost(postId) {
     updatedContent = document.getElementById(`${postId}updateContent`).value;
     let updatedPost = {id: postId, title: updatedTitle, content: updatedContent, image: updatedImage};
     console.log('updatedPost is: ', updatedPost);
-    
-    // FIX BUTTON IDS
-    postItem.innerHTML = `
-            <h3>${updatedPost.title}</h3>
-            <a href="#" class="thumbnail">
-            <img src="${updatedPost.image}" alt="${updatedPost.content}">
-            </a>
-            <p>${updatedPost.content}</p><br>
-            <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${updatedPost.id}-updateModal">
-                Update post
-            </button>
-            <button type="button" class="btn btn-danger deleteBtns">Delete</button>
+
+    //sends updated data to PUT route on DB
+    serverRequest(`/posts/${postId}`, "PUT", updatedPost)
+    .then((updatedPost)=>{
+        postItem.innerHTML = `
+        <h3>${updatedPost.title}</h3>
+        <a href="#" class="thumbnail">
+        <img src="${updatedPost.image}" alt="${updatedPost.content}">
+        </a>
+        <p>${updatedPost.content}</p><br>
+        <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${updatedPost.id}-updateModal">
+            Update post
+        </button>
+        <button type="button" class="btn btn-danger deleteBtns">Delete</button>
         `;
-        updateBtn.setAttribute('data-dismiss', 'modal');
-
-        //sends updated data to PUT route on DB
-        serverRequest(`/posts/${postId}`, "PUT", updatecb, updatedPost);
-
+        $(`#${updatedPost._id}-updateModal`).modal('hide');
+        // postItem.style.display = 'none';
+        // updateBtn.setAttribute('data-dismiss', 'modal');
+    })
+    .catch((err)=> {
+        console.log(err);
+    });
 //    else {
 //         createModalHeader.innerHTML+= addModalAlert();
 //    }
 }
 
-function updatecb(msg, data) {
-    console.log('reached updatecb');
-    msg = JSON.parse(msg);
-    console.log('msg data', msg);
-    console.log('data', data);
 
-    // // loginBtn.setAttribute('data-dismiss', 'modal');
-    // //welcome message display   
-    // welcomeUser(data.username);
-    // //hide login and register modal Open btns
-    // hideLogins();
-    // //load all posts
-    // loadGallery();
-    // //show hidden createPost modal open button
-    // createOpen.style.display = 'inline-block';  
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 //************************************************************************************************************************** */
+//UNUSED/DISCARDED */
 //************************************************************************************************************************** */
-//************************************************************************************************************************** */
+// function updatecb(msg, data) {
+//     console.log('reached updatecb');
+//     msg = JSON.parse(msg);
+//     console.log('msg data', msg);
+//     console.log('data', data); 
+// }
+
+//flow: log in (or register), have all posts show, along w/ update/delete buttons, and createNewPost
+
+//functions needed: logUserIn, registerUser, showRegisterForm, displayBtns, showIndexPage, create/edit/updatePosts, 
+//checkPassword, checkUserName, showCreatePostForm, showUpdatePostForm, addPostToGallery, serverRequest
+
+//misc questions: Forgotten password? (send email?)
+//how to distinguish wrong password (i.e., existing user) from misspelled username?  
+
+
+
+
 
 // function showUserIndexPage() {
     //     //only runs if user is logged in; if so, runs via "Show your posts" button
@@ -526,3 +476,101 @@ function updatecb(msg, data) {
     // `;
 // }
 
+// function addModalOpenListeners(open) {
+//     //$$$$$$$$$$$$$$$$$$$define opens below
+//     //open is the name of an array of opens sharing the same class name
+//     for(let i = 0; i < opens.length; i++) {
+//         opens.push(document.getElementsByClassName(`${open}`)[i]);
+//     }
+//     open.addEventListener('click', appendUpdateModal);
+// }
+
+// window.addEventListener('load', loadGallery);
+
+// function showCreateModal() {
+//     console.log('clicked createOpen');
+//     createModal.style.display = 'block';
+// }
+
+// function appendCreateModal() {
+//     modalSection.innerHTML += `
+//     <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+//             <div class="modal-dialog" role="document">
+//               <div class="modal-content" id="createmodalContent">
+//                 <div class="modal-header">
+//                   <h5 class="modal-title" id="createModalHeader">Create a new post</h5>
+//                   <button type="button" class="close" data-dismiss="modal">&times;</button>
+//                 </div>
+//                 <div class="modal-body">
+//                     Title: <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
+//                     Content: <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
+//                     Image: <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
+//                 </div>
+//                   <div class="modal-footer">
+//                     <button type="button" class="btn btn-primary" onclick="createPost()" id="createBtn">Create</button>
+//                   </div>
+//               </div>
+//             </div>
+//           </div>
+//           `;
+//         //   createBtn = document.getElementById('createBtn');
+//         //   console.log('createBtn exists ', createBtn);
+//         //   createBtn.addEventListener("click", createPost);
+// }
+
+
+//make function to be usable everywhere that attaches bearerToken to all requests
+//this is like making our own getJSON
+//serverRequest will reuse bearerToken, attach it to all requests going forward
+//this method allows us to attach bearerToken to all getJSON calls, which is a functionality regular getJSON
+//doesn't have
+//if success, change loggedIn to = true
+// function serverRequest(requestURL, data, httpVerb, callback) {
+//     //api/login will be the requestURL, or api/posts, etc.
+//     //data can be $ajax, etc.
+//     //also need httpVerb (GET, POST, etc.)
+//     //callback does this without promises, callback will process data
+//     //or you can return promise with $.getJSON
+//     //httpVerb is built in to getJSON, but in .ajax this is under the type: 
+//     // $.getJSON(requestURL, function(data) {
+//     //     return data from serverRequest
+//     //     callback(data); //if data was successfully returned, so have an if/else setup
+//     //     will be returned wherever it was called
+//     //     this can now be run inside logIn, with a globally set 
+//     // })
+
+//     // switch(httpVerb) {
+//     //     case "GET" : 
+//     //         return 
+        
+//     //     case "POST" : 
+//     //         return 
+        
+//     //     case "PUT" : 
+//     //         return 
+        
+//     //     case "DELETE" : 
+//     //         return 
+        
+//     //     default: 
+//     //         console.log("Not a valid HTTP request");
+//     // }
+// }
+
+
+// function checkPassword() {
+//     //run this inside logIn
+//     //find user in DB by passing in userNameInput
+
+//     let userNameToCheck;
+//     userNameToCheck = userNameInput.value;
+//     //check his password with what was just entered
+    
+//     let passwordToCheck;
+//     passwordToCheck = passwordInput.value;
+
+//     //if they don't match, give warning message and keep login open
+//     //if they match, go to next()
+
+
+// }
