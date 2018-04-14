@@ -67,7 +67,7 @@ function serverRequest(requestURL, httpVerb, data) {
         xhttp.onreadystatechange = function() {
             //readyState of 4 means done; check if it's done, then if the status is OK (200)
             if(this.readyState == 4) {
-                if(this.status == 200) {
+                if(this.status >= 200 && this.status < 300) {
                     // console.log(this.responseText);
                     //resolve is to promises what callback is to the callback method; this is what executes when doing a .then
                     //this parses what comes back back from the server; JSON.parse takes string and makes it into JSON
@@ -274,33 +274,36 @@ function appendDeleteModal(post) {
                     <strong>${deleteWarning}</strong>.
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="deleteBtn">Delete</button>
+                <button type="button" class="btn btn-primary" onclick="deletePost('${post.id}')"id="${post.id}deleteBtn">Delete</button>
                 </div>
             </div>
         </div>
     </div>
     `;
-    deleteBtn = document.getElementById("deleteBtn");
+    deleteBtn = document.getElementById(`${post.id}deleteBtn`);
     // console.log('showing deleteBtn exists ' + deleteBtn);
     // deleteBtn.addEventListener("click", deletePost.bind(this, postId));
-    deleteBtn.addEventListener("click", deletePost.bind(this, post.id));
+    // deleteBtn.addEventListener("click", deletePost.bind(this, post.id));
 }
 
 //runs on clicking delete button
 // function deletePost(postId) {
 function deletePost(postId) {
-    console.log('reached delete post and we have the ID to delete', postId);
+    console.log('reached delete post and we have the ID to delete: ', postId);
     //if clicked, delete this post from DB
     serverRequest('/posts/'+postId, "DELETE")
     .then((postObj)=>{
         console.log('reached delete cb');
         //my backend route still returns the ID as data object, even though it's deleted
-        let postId = postObj.data.id;
+        console.log(`postObj is ${postObj}, postObj data is ${postObj.data}`)
+        //postObj.data is the post ID
+        let deletedPostId = postObj.data;
 
-        //DELETE FROM DOM
-        //find this ID in the DOM, ${postID}-blah, remove it
+        //DELETE FROM DOM: find this ID in the DOM, remove it
         let postItem = document.getElementById(`${postId}`);
+        console.log('Post item is', postItem);
         postItem.remove();
+        $(`#${postItem.id}-deleteModal`).modal('hide');
 
         // let ids = [];
         // for(let i = 0; i < postArray.length; i++) {
@@ -319,7 +322,7 @@ function addDeleteWarning() {
     return `
     <div class="alert alert-danger alert-dismissible">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <strong>${deleteWarning}</strong>.
+        <strong>${deleteWarning}</strong>
     </div>
     `;
 }
@@ -331,6 +334,7 @@ function addDeleteWarning() {
 function appendUpdateModal(post) {
     // console.log('append updateModal fired; post to be updated is: ', post);
     
+    // console.log(`The postID is ${post.id}`);
     modalSection.innerHTML += `
     <div class="modal fade" id="${post.id}-updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -387,7 +391,7 @@ function updatePost(postId) {
         <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${updatedPost.id}-updateModal">
             Update post
         </button>
-        <button type="button" class="btn btn-danger deleteBtns">Delete</button>
+        <button type="button" class="btn btn-danger deleteBtns" data-toggle="modal" data-target="#${updatedPost.id}-deleteModal">Delete</button>
         `;
         $(`#${updatedPost._id}-updateModal`).modal('hide');
         // postItem.style.display = 'none';

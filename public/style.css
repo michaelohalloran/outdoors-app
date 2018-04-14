@@ -7,6 +7,15 @@ body * {
     box-sizing: border-box;
 }
 
+h1 {
+    font-size: 2.5rem;
+    color: rgb(0, 0, 0);
+    background-color: #adaca6;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 /* #imageContainer {
     background: url('https://i.pinimg.com/originals/d1/4f/f2/d14ff2dabf433616b1742b38b7cee931.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -86,6 +95,11 @@ body * {
 
 #userWelcome {
     display: none;
+    color: #ddedff;
+    background-color: #007bff;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 4px;
 }
 
 #loginOpen {
@@ -154,4 +168,12 @@ img {
 }
 img:hover {
     transform: scale(1.1);
+}
+
+
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
 }
