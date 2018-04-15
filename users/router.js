@@ -7,7 +7,7 @@ const router = express.Router();
 
 const jsonParser = bodyParser.json();
 
-// Post to register a new user
+// Post to register a new user, to /api/users route
 router.post('/', jsonParser, (req, res) => {
   const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
@@ -123,6 +123,7 @@ router.post('/', jsonParser, (req, res) => {
       });
     })
     .then(user => {
+      console.log(`new user is ${user}`);
       return res.status(201).json(user.serialize());
     })
     .catch(err => {

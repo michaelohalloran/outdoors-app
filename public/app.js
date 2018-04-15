@@ -99,7 +99,7 @@ function serverRequest(requestURL, httpVerb, data) {
 //specifically: it saves the authToken we just grabbed, and also cleans up the UI once you log in
 function handleLogin(responseObj, sentData) {
     authToken = responseObj.authToken;
-    console.log('authToken is',authToken)
+    // console.log('authToken is',authToken);
     //welcome message display   
     welcomeUser(sentData.username);
     //hide login and register modal Open btns
@@ -114,14 +114,14 @@ function logIn(event) {
     let userNameVal;
     let passwordVal;
     let userVals;
-    if(userNameInput.value && passwordInput.value) {
+    if(userNameInput.value.length > 0 && passwordInput.value.length > 0) {
         userNameVal = userNameInput.value;
         passwordVal = passwordInput.value;
         userVals = {username: userNameVal, password: passwordVal};
         //log this user in w/ DB call
         serverRequest('/api/auth/login', "POST", userVals)
             .then((data)=> {
-                console.log(data);
+                // console.log(data);
                 handleLogin(data, userVals);
                 //close loginModal
                 $('#loginModal').modal('hide');
@@ -139,18 +139,33 @@ function registerNewUser(event) {
     let newUserNameVal;
     let newPasswordVal;
     let newUserVals;
-    if(newUserNameInput.value && newPasswordInput.value) {
+    if(newUserNameInput.value.length > 0 && newPasswordInput.value.length > 0) {
         newUserNameVal = newUserNameInput.value;
         newPasswordVal = newPasswordInput.value;
         newUserVals = {username: newUserNameVal, password: newPasswordVal};
         //register this user
         serverRequest('/api/users', "POST", newUserVals)
             .then((data)=> {
-                handleLogin(data, newUserVals);
-                //load all posts
-                loadGallery();
-                //close registerModal
-                registerBtn.setAttribute('data-dismiss', 'modal');
+                // console.log(`newUser added is ${newUserVals}; his username is ${newUserVals.username}`);
+                serverRequest('/api/auth/login', "POST", newUserVals)
+                    .then((data)=> {
+                        // console.log(data); //this is an object containing a single authToken key and its value
+                        // console.log('newUserVals: ', newUserVals);
+                        //log in the newly created user
+                        handleLogin(data, newUserVals);
+                        //close registerModal
+                        $('#registerModal').modal('hide');
+                        //load all posts
+                        loadGallery();
+                        //close registerModal
+                        // registerBtn.setAttribute('data-dismiss', 'modal');
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                    });
+            })
+            .catch((err)=> {
+                console.log(err);
             });
     } else {
         registerTitle.innerHTML+= addModalAlert(postErrorMsg);
@@ -206,7 +221,7 @@ function loadGallery() {
 }
 
 function createPost() {
-    console.log('createBtn clicked and createPost called');
+    // console.log('createBtn clicked and createPost called');
   //if all 3 fields are filled in, then send serverRequest
    if(elTitle.value.length > 0 && elContent.value.length > 0 && elImageUrl.value.length > 0) {
 
@@ -220,7 +235,7 @@ function createPost() {
         serverRequest('/posts', "POST", newPost)
         .then((newPost)=> {
             //add div element/thumbnail to gallery
-            console.log('new post is: ', newPost);
+            // console.log('new post is: ', newPost);
             galleryRow.innerHTML+= `
             <div id="${newPost._id}" class="col-xs-12 col-sm-6 col-md-4 postItem">
                 <h3>${newPost.title}</h3>
@@ -271,7 +286,7 @@ function appendDeleteModal(post) {
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body alert alert-danger alert-dismissible">
-                    <strong>${deleteWarning}</strong>.
+                    <strong>${deleteWarning}</strong>
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="deletePost('${post.id}')"id="${post.id}deleteBtn">Delete</button>
@@ -289,19 +304,19 @@ function appendDeleteModal(post) {
 //runs on clicking delete button
 // function deletePost(postId) {
 function deletePost(postId) {
-    console.log('reached delete post and we have the ID to delete: ', postId);
+    // console.log('reached delete post and we have the ID to delete: ', postId);
     //if clicked, delete this post from DB
     serverRequest('/posts/'+postId, "DELETE")
     .then((postObj)=>{
-        console.log('reached delete cb');
+        // console.log('reached delete cb');
         //my backend route still returns the ID as data object, even though it's deleted
-        console.log(`postObj is ${postObj}, postObj data is ${postObj.data}`)
+        // console.log(`postObj is ${postObj}, postObj data is ${postObj.data}`);
         //postObj.data is the post ID
         let deletedPostId = postObj.data;
 
         //DELETE FROM DOM: find this ID in the DOM, remove it
         let postItem = document.getElementById(`${postId}`);
-        console.log('Post item is', postItem);
+        // console.log('Post item is', postItem);
         postItem.remove();
         $(`#${postItem.id}-deleteModal`).modal('hide');
 
@@ -360,7 +375,7 @@ function appendUpdateModal(post) {
 
 //fires when clicking updateBtn inside updateModal, updates DOM and DB
 function updatePost(postId) {
-    console.log(`clicked updatePost; updating post ${postId}`);
+    // console.log(`clicked updatePost; updating post ${postId}`);
     //get the ID of the modal body which you're about to update
     let modalId = `${postId}-modalBody`;
     //in the DOM, each post item is a div with an id and all title/image content; the following grabs
@@ -377,21 +392,22 @@ function updatePost(postId) {
     updatedTitle = document.getElementById(`${postId}updateTitle`).value;
     updatedContent = document.getElementById(`${postId}updateContent`).value;
     let updatedPost = {id: postId, title: updatedTitle, content: updatedContent, image: updatedImage};
-    console.log('updatedPost is: ', updatedPost);
+    // console.log('updatedPost is: ', updatedPost);
 
     //sends updated data to PUT route on DB
     serverRequest(`/posts/${postId}`, "PUT", updatedPost)
     .then((updatedPost)=>{
+        // console.log(updatedPost);
         postItem.innerHTML = `
         <h3>${updatedPost.title}</h3>
         <a href="#" class="thumbnail">
         <img src="${updatedPost.image}" alt="${updatedPost.content}">
         </a>
         <p>${updatedPost.content}</p><br>
-        <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${updatedPost.id}-updateModal">
+        <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${updatedPost._id}-updateModal">
             Update post
         </button>
-        <button type="button" class="btn btn-danger deleteBtns" data-toggle="modal" data-target="#${updatedPost.id}-deleteModal">Delete</button>
+        <button type="button" class="btn btn-danger deleteBtns" data-toggle="modal" data-target="#${updatedPost._id}-deleteModal">Delete</button>
         `;
         $(`#${updatedPost._id}-updateModal`).modal('hide');
         // postItem.style.display = 'none';
@@ -423,7 +439,7 @@ function updatePost(postId) {
 
 
 //************************************************************************************************************************** */
-//UNUSED/DISCARDED */
+//TO USE LATER?*/
 //************************************************************************************************************************** */
 // function updatecb(msg, data) {
 //     console.log('reached updatecb');
