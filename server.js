@@ -58,9 +58,10 @@ app.get('/api/protected', jwtAuth, (req, res) => {
     return res.status(404).json({ message: 'Not Found' });
   });
 
-let server;
+
 
 function runServer(databaseUrl, port = PORT) {
+    let server;
     return new Promise((resolve, reject)=> {
         mongoose.connect(databaseUrl, err=> {
             if(err) {
