@@ -1,2 +1,9 @@
 language: node_js
-node_js: node 
+node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: Dluic+JsrDIaNZZzfiz+q/Xza/u7A49dD5dpFimRM3eoHMp7XNZy4nS7n/K7s2Z2Q5zT0xM+IbU6CDUxA3vmaCpqnUwY0s/F2Of9Oq4rZyTfJlZaIje6pVdh3BAVUOM7uVSJcPe+LIn7Hu4r6Lk38F24xca4KdwrNyBxiLBGjRtvN+dJ4EPRX86q2DV47/86IXxc8csBUG41Gvq5zSipr2J3LBM4NW9DsPrfaa/9Rk0pOJ7GdgJiKsySk9Jtz1JN/fenCbsHr+JO9E5zxHa4+jd9GlPxFXB1J99WWA/oScYpxGskFJxrfyKLw/V9qXFPasK63SZv6jMWepBiEDFOv/Ufl3cQeKABhF0COCLT1HJ+YB9dowD3I5yl4qOniqMth36l+TQVZugHFC50wgORtLhylH5+sNmZOAC6BwsuJW58fprfjvhCy6u73duVYcawe99+v0mVL9nBpvbphIXm0i77HB5cuHQk2ehSV0NWUz4KtleQly1sY/gORHz9JhDJFSu/YrX7emORKcUYg46Ddqs3wY2q8o/w3+feclmVTqTJqu5Lk0ql2g75NIZCznH32CJ9VCSS0Ze45LyPF5xidi4PF4+K/JB9aW/eljffKFd7jk5NQjGCDe1JRumGEkFKvNPJmO6ZzWtYmI8J7dD4RW3JARlvG8SZmahylpx8d4A=
+  app: damp-sands-84121
+  on:
+    repo: mike31415/outdoors-app
