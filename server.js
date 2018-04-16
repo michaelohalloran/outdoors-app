@@ -15,7 +15,7 @@ const {localStrategy, jwtStrategy } = require('./auth/strategies');
 // mongoose.connect(TEST_URL);
 mongoose.Promise = global.Promise;
 //import URLs for DB
-const {TEST_URL, PORT} = require('./config.js');
+const {DATABASE_URL, TEST_DATABASE_URL, PORT} = require('./config.js');
 
 console.log('inside server.js before middleware');
 //MIDDLEWARE
@@ -93,7 +93,7 @@ function closeServer() {
 }
 
 if(require.main === module) {
-    runServer(TEST_URL).catch(err=>console.error(err));
+    runServer(DATABASE_URL).catch(err=>console.error(err));
 }
 
 

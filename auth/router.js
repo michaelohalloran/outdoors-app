@@ -9,9 +9,9 @@ const config = require('../config');
 const router = express.Router();
 
 //import URLs for DB
-const {TEST_URL, PORT} = require('../config.js');
-mongoose.connect(TEST_URL);
-mongoose.Promise = global.Promise;
+// const {DATABASE_URL, PORT} = require('../config.js');
+// mongoose.connect(DATABASE_URL);
+// mongoose.Promise = global.Promise;
 console.log('testing inside router.js');
 router.use(morgan('common'));
 router.use(jsonParser);
@@ -32,11 +32,9 @@ const localAuth = passport.authenticate('local', {session: false});
 //**********************************************************************************
 
 //creates authToken, returns it back to client
-//this involves authentication
 //this is /api/auth/login route
 router.post('/login', localAuth, (req,res)=> {
   //something in Passport authenticate attaches additional ability (like "user") onto request object (could not have called this "blah")
-    console.log('testing login route');
     const authToken = createAuthToken(req.user.serialize());
     res.json({authToken});
 });

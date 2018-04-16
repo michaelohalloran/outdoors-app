@@ -68,7 +68,9 @@ function serverRequest(requestURL, httpVerb, data) {
             //readyState of 4 means done; check if it's done, then if the status is OK (200)
             if(this.readyState == 4) {
                 if(this.status >= 200 && this.status < 300) {
-                    // console.log(this.responseText);
+                    console.log('responsetext: ', this.responseText);
+                    console.log('parsed responsetext: ', JSON.parse(this.responseText));
+                    console.log('data: ', data);
                     //resolve is to promises what callback is to the callback method; this is what executes when doing a .then
                     //this parses what comes back back from the server; JSON.parse takes string and makes it into JSON
                     //data is any data I may be sending
@@ -98,6 +100,7 @@ function serverRequest(requestURL, httpVerb, data) {
 //this consumes the data returned in serverRequest
 //specifically: it saves the authToken we just grabbed, and also cleans up the UI once you log in
 function handleLogin(responseObj, sentData) {
+    //responseObj is this.responseText (above, from serverRequest); for a login this is an object with an authToken key
     authToken = responseObj.authToken;
     // console.log('authToken is',authToken);
     //welcome message display   

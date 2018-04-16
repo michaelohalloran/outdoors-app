@@ -7,9 +7,9 @@ const passport = require('passport');
 const router = express.Router();
 
 //import URLs for DB
-const {TEST_URL, PORT} = require('../config.js');
-mongoose.connect(TEST_URL);
-mongoose.Promise = global.Promise;
+// const {DATABASE_URL, PORT} = require('../config.js');
+// mongoose.connect(DATABASE_URL);
+// mongoose.Promise = global.Promise;
 
 router.use(morgan('common'));
 router.use(jsonParser);
@@ -93,11 +93,11 @@ router.put('/:id', jwtAuth, (req, res)=> {
             toUpdate[field] = req.body[field];
         };
     })
-    console.log('id you pass is ', req.params.id);
-    console.log('type of this id is', typeof req.params.id);
-    let mongooseId = mongoose.Types.ObjectId(req.params.id);
-    console.log('check if this converts it: ', mongooseId);
-    console.log('type of mongoose ID is ', typeof mongooseId);
+    // console.log('id you pass is ', req.params.id);
+    // console.log('type of this id is', typeof req.params.id);
+    // let mongooseId = mongoose.Types.ObjectId(req.params.id);
+    // console.log('check if this converts it: ', mongooseId);
+    // console.log('type of mongoose ID is ', typeof mongooseId);
 
     Post
         .findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
