@@ -52,12 +52,17 @@ function tearDownDb() {
 //************************************************ */
 //TESTS
 //************************************************ */
+//initial steps: 
+//before: run server, seed Post data, hash a user password and create new user beforeEach, 
+//after: remove user, tear down DB, close server
 
 describe('Posts API resource', function() {
 
     const username = 'Tommy';
     const password = 'password1234';
-
+    const firstName = '';
+    const lastName = '';
+    
     before(function() {
         return runServer(TEST_DATABASE_URL);
     });
@@ -87,90 +92,123 @@ describe('Posts API resource', function() {
         return closeServer();
     });
 
+    describe('Auth tests', function(){
+        it('Should send protected data', function () {
 
-    xit('should reject bad login, not return Bearer Token', function(done) {
-        chai.request(app)
-        .post("/api/auth/login")
-        .send({username: 'John',password: 'password'})
-        .end(function(err, res) {
-            expect(res).to.have.status(401);    // <= Test completes before this runs
-            done();
-          });
-    });
+            const token = jwt.sign(
+              {
+                user: {
+                  username,
+                }
+              },
+              JWT_SECRET,
+              {
+                algorithm: 'HS256',
+                subject: username,
+                expiresIn: '7d'
+              }
+            );
+      
+            return chai
+              .request(app)
+              .get('/posts')
+              .set('authorization', `Bearer ${token}`)
+              .then(res => {
+                  console.log('res.body.data[0] is: ', res.body.data[0]);
+                expect(res).to.have.status(200);
+                expect(res.body).to.be.an('object');
+              });
+          }); //end of IT
+    
+        it('Should return a valid auth token', function () {
+            return chai
+              .request(app)
+              .post('/api/auth/login')
+              .send({ username, password })
+              .then(res => {
+                // console.log(`res.body is: `, res.body);
+                expect(res).to.have.status(200);
+                expect(res.body).to.be.an('object');
+                const token = res.body.authToken;
+                expect(token).to.be.a('string');
+                const payload = jwt.verify(token, JWT_SECRET, {
+                  algorithm: ['HS256']
+                });
+                expect(payload.user).to.deep.equal({
+                  username,
+                  firstName,
+                  lastName
+                });
+              });
+        }); //end of IT
+   
+        it('Should reject requests with incorrect usernames', function () {
+            return chai
+              .request(app)
+              .post('/api/auth/login')
+              .send({ username: 'wrongUsername', password })
+              .then(() =>
+                expect.fail(null, null, 'Request should not succeed')
+              )
+              .catch(err => {
+                if (err instanceof chai.AssertionError) {
+                  throw err;
+                }
+      
+                const res = err.response;
+                expect(res).to.have.status(401);
+              });
+        });
 
-    // it('should accept good login, return Bearer Token', function(done) {
-    //     chai.request(app)
-    //     .post("/api/auth/login")
-    //     .send({username: 'Bob', password: 'password1234'})
-    //     .end(function(err, res) {
-    //         console.log('response is: ', res.statusCode);
-    //         expect(res).to.have.status(200);    // <= Test completes before this runs
-    //         //TEST FOR TOKEN
-    //         expect(res.responseText).to.have.length.of.at.least(1);
-    //         done();
-    //       });
-    // });
-
-    it('Should send protected data', function () {
-        const token = jwt.sign(
-          {
-            user: {
-              username,
-            }
-          },
-          JWT_SECRET,
-          {
-            algorithm: 'HS256',
-            subject: username,
-            expiresIn: '7d'
-          }
-        );
-  
+        it('Should reject requests with incorrect passwords', function () {
         return chai
-          .request(app)
-          .get('/posts')
-          .set('authorization', `Bearer ${token}`)
-          .then(res => {
-              console.log('res.body.data[0] is: ', res.body.data[0]);
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.an('object');
-          });
-      });
+            .request(app)
+            .post('/api/auth/login')
+            .send({ username, password: 'wrongPassword' })
+            .then(() =>
+            expect.fail(null, null, 'Request should not succeed')
+            )
+            .catch(err => {
+            if (err instanceof chai.AssertionError) {
+                throw err;
+            }
+    
+            const res = err.response;
+            expect(res).to.have.status(401);
+            });
+        });
+    });
+    
+    
+    describe('GET endpoint', function(){
+        //create authToken
+        const token = jwt.sign(
+            {
+              user: {
+                username,
+              }
+            },
+            JWT_SECRET,
+            {
+              algorithm: 'HS256',
+              subject: username,
+              expiresIn: '7d'
+            }
+        );
 
-    //test that gallery loads once user
-
-    xdescribe('GET endpoint for posts', function() {
-
-        //fix to return bearer Token*********
-
-        // beforeEach(function(done){
-        //     //login into the system
-        //     request
-        //     .post("http:localhost:8080/api/auth/login")
-        //     .send({username : "John", password : "password"})
-        //     .end(function assert(err, res){
-        //         if(err){
-        //             console.log(err);
-        //             done();
-        //         }
-        //         else{
-        //             done();
-        //         }
-        //     });
-        // });
-
-        it('should show return all posts', function() {
+        it('should return all posts', function() {
             let res;
             return chai.request(app)
             .get('/posts')
+            .set('authorization', `Bearer ${token}`)
             .then(function(_res) {
                 res = _res;
                 expect(res).to.have.status(200);
-                expect(res.body).to.have.length.of.at.least(1);
+                expect(res.body.data).to.have.length.of.at.least(1);
                 return Post.count();
             })
             .then(function(count) {
-                expect(res.body).to.have.lengthOf(count);
+                expect(res.body.data).to.have.lengthOf(count);
             });
         }); //end IT GET
 
@@ -178,18 +216,19 @@ describe('Posts API resource', function() {
             let resPost;
             return chai.request(app) 
             .get('/posts')
+            .set('authorization', `Bearer ${token}`)
             .then(function(res){
                 expect(res).to.have.status(200)
                 expect(res).to.be.json;
-                expect(res.body).to.be.a('array');
-                expect(res.body).to.have.length.of.at.least(1);
+                expect(res.body.data).to.be.a('array');
+                expect(res.body.data).to.have.length.of.at.least(1);
 
-                res.body.forEach(function(post){
+                res.body.data.forEach(function(post){
                     expect(post).to.be.a('object');
                     expect(post).to.include.keys(
                         'title','content','image');
                 });
-                resPost = res.body[0];
+                resPost = res.body.data[0];
                 return Post.findById(resPost.id);
             })
             .then(function(post){
@@ -201,12 +240,28 @@ describe('Posts API resource', function() {
 
     }); //end describe GET endpoint
 
-
-    xdescribe('POST endpoint', function() {
+    
+    describe('POST endpoint', function() {
+        
+        const token = jwt.sign(
+            {
+              user: {
+                username,
+              }
+            },
+            JWT_SECRET,
+            {
+              algorithm: 'HS256',
+              subject: username,
+              expiresIn: '7d'
+            }
+        );
+        
         it('should add new blog post', function() {
             let newPost = generatePost();
             return chai.request(app)
                 .post('/posts')
+                .set('authorization', `Bearer ${token}`)
                 .send(newPost)
                 .then(function(res){
                     // console.log('newPost author is ' + newPost.author.firstName);
@@ -231,7 +286,21 @@ describe('Posts API resource', function() {
     }); //POST describe
 
 
-    xdescribe('PUT endpoint', function(){
+    describe('PUT endpoint', function(){
+        const token = jwt.sign(
+            {
+              user: {
+                username,
+              }
+            },
+            JWT_SECRET,
+            {
+              algorithm: 'HS256',
+              subject: username,
+              expiresIn: '7d'
+            }
+        );
+
         it('should update a Post', function(){
             const updatePost = {
                 title: "Updated post",
@@ -247,25 +316,67 @@ describe('Posts API resource', function() {
 
                     return chai.request(app)
                         .put(`/posts/${post.id}`)
+                        .set('authorization', `Bearer ${token}`)
                         .send(updatePost);
                 })
                 .then(function(res){
+                    console.log('res is', res);
+                    console.log('res.body is', res.body);
                     //204 status means successfully reset doc, no content to return
-                    expect(res).to.have.status(204);
+                    expect(res).to.have.status(200);
                     //find ID of post you just updated, return that as promise to next .then
                     // console.log('updatePost is ' + updatePost.title);
                     return Post.findById(updatePost.id);
                 })
                 .then(function(post){
-                    // console.log('updatePost title is ' + updatePost.title);
-                    // console.log('post title is ' + post.title);
                     expect(post.title).to.equal(updatePost.title);
                     expect(post.content).to.equal(updatePost.content);
-                    // post.title.should.equal(updateData.title);
-                    // post.content.should.equal(updateData.content);
                 });
         }); //first PUT it
     }); //PUT describe
+
+    describe('DELETE endpoint', function() {
+        const token = jwt.sign(
+            {
+              user: {
+                username,
+              }
+            },
+            JWT_SECRET,
+            {
+              algorithm: 'HS256',
+              subject: username,
+              expiresIn: '7d'
+            }
+        );
+
+        it('should delete a POST', function(){
+            //get DB post id, make delete request, check DB to see it's deleted 
+            let post;
+
+            return Post 
+                .findOne() 
+                .then(function(_post) { 
+                    //set your post to be deleted equal to _post (what you just found w/findOne)
+                    post = _post;
+                    return chai.request(app) 
+                        .delete(`/posts/${post.id}`)
+                        .set('authorization', `Bearer ${token}`);
+                })
+                //now check that it's deleted by searching for its ID in DB
+                .then(function(res){
+                    console.log(`res is: `, res)
+                    expect(res).to.have.status(200);
+                    return Post.findById(post.id);
+                })
+                .then(function(_post){
+                    expect(_post).to.be.null;
+                });
+
+        });// end of DELETE it
+
+    }); //DELETE describe
+
 
 }); //End of Outermost Describe
 
