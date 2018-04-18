@@ -231,6 +231,9 @@ function createPost() {
                 <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${newPost._id}-deleteModal">Delete</button>
             </div>
             `;
+            elTitle.value = '';
+            elContent.value = '';
+            elImageUrl.value = '';
             $('#createModal').modal('hide'); 
         })
         .catch((err)=> {
