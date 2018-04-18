@@ -2,11 +2,11 @@
 
 <strong>The Great Outdoors</strong>
 
-<strong>Link: </strong>
+<strong>Link: </strong> https://damp-sands-84121.herokuapp.com/
 
-This app allows logged in users to create and update posts containing texts and images, which are then added to the post gallery.  Authenticated users can also delete posts.
+The Great Outdoors app allows logged in users to create and update posts containing texts and images of natural landscapes, which are then added to the post gallery.  Authenticated users can create, update, and delete posts.
 
-<strong>Screenshot</strong>: ![alt text](/path/to/img.jpg "Title")
+<strong>Screenshot</strong>: ![app screenshot](/greatOutdoors.jpg "The Great Outdoors")
 
 <strong>API</strong>
 
@@ -29,3 +29,4 @@ Testing with Mocha and Chai
 Steve Hartzog
 Thinkful
 John-Albert Morales
+Ray Smith
