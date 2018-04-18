@@ -13,117 +13,122 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-  
-    <div id="topContainer">
-      <h1>The Great Outdoors</h1>
-      <!-- Modal Opens -->
-      <p id="userWelcome">Welcome</p>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal" id="loginOpen">
-        Login
-      </button>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal" id="registerOpen">
-        Sign Up
-      </button>
-
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" id="createOpen">
-        Create new post
-      </button>
-    </div>
     
+    <header>
+      <div id="topContainer">
+        <h1>The Great Outdoors</h1>
+        <!-- Modal Opens -->
+        <p id="userWelcome">Welcome</p>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal" id="loginOpen">
+          Login
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal" id="registerOpen">
+          Sign Up
+        </button>
+  
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" id="createOpen">
+          Create new post
+        </button>
+      </div>
+    </header>
+    
+    <main role="main" aria-live="polite">
 
-      <ul class="slideshow">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-      </ul>
+      <section>
+        <ul class="slideshow">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </section>
 
-        <section id="gallery">
-          <!-- //retrieve current posts w/API call  -->
-          <div class="row">
-            <!-- <div class="col-xs-12 col-sm-4 col-md-3">
-              <a href="#" class="thumbnail">
-                <img src="https://i.pinimg.com/originals/62/74/ac/6274ac70c8809bbbe7f92ad4e4acf535.jpg" alt="Mountain sunrise">
-              </a>
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-3">
-              <a href="#" class="thumbnail">
-                <img src="https://www.aurorahunter.com/_pix/800w/valley-of-light-salat.jpg" alt="Aurora borealis">
-              </a>
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-3">
-              <a href="#" class="thumbnail">
-                <img src="https://lonelyplanetwpnews.imgix.net/2018/02/1st-Max-Rive-8396.jpg" alt="Landscape">
-              </a>
-            </div> -->
+      <section id="gallery">
+        <!-- //retrieve current posts w/API call  -->
+        <div class="row">
+          <!-- <div class="col-xs-12 col-sm-4 col-md-3">
+            <a href="#" class="thumbnail">
+              <img src="https://i.pinimg.com/originals/62/74/ac/6274ac70c8809bbbe7f92ad4e4acf535.jpg" alt="Mountain sunrise">
+            </a>
           </div>
-        </section>
+          <div class="col-xs-12 col-sm-4 col-md-3">
+            <a href="#" class="thumbnail">
+              <img src="https://www.aurorahunter.com/_pix/800w/valley-of-light-salat.jpg" alt="Aurora borealis">
+            </a>
+          </div>
+          <div class="col-xs-12 col-sm-4 col-md-3">
+            <a href="#" class="thumbnail">
+              <img src="https://lonelyplanetwpnews.imgix.net/2018/02/1st-Max-Rive-8396.jpg" alt="Landscape">
+            </a>
+          </div> -->
+        </div>
+      </section>
 
-        <section id="staticModals">
-          <!-- LOGIN MODAL -->
-          <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content" id="modalContent">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="loginTitle">Login</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                      <input type="text" id="username" name="username" placeholder="User Name" required="true"><br>
-                      <input type="password" id="password" name="password" placeholder="Password" required="true"><br>
-                  </div>
-                    <div class="modal-footer">        
-                      <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
-                    </div>
+      <section id="staticModals">
+        <!-- LOGIN MODAL -->
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content" id="modalContent">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="loginTitle">Login</h5>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
+                <div class="modal-body">
+                    <input type="text" id="username" name="username" placeholder="User Name" required="true"><br>
+                    <input type="password" id="password" name="password" placeholder="Password" required="true"><br>
+                </div>
+                  <div class="modal-footer">        
+                    <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
+                  </div>
               </div>
             </div>
-  
-            <!-- REGISTERMODAL -->
-            <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content" id="registerModalContent">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="registerTitle">Sign up</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                      <input type="text" id="newUsername" name="username" placeholder="User Name" required="true"><br>
-                      <input type="password" id="newPassword" name="password" placeholder="Password" required="true"><br>
-                  </div>
-                    <div class="modal-footer">        
-                      <button type="button" class="btn btn-primary" id="registerBtn">Sign Up</button>
-                    </div>
-                </div>
-              </div>
-            </div>
-  
-            <!-- CREATE MODAL -->
-            <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content" id="createmodalContent">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="createModalHeader">Create a new post</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                      <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
-                      <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
-                      <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
-                  </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-primary" id="createBtn">Create</button>
-                    </div>
-                </div>
-              </div>
-            </div>
-        </section>
+          </div>
 
-        <section id="modalSection">
-        <section>
+          <!-- REGISTERMODAL -->
+          <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content" id="registerModalContent">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="registerTitle">Sign up</h5>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="newUsername" name="username" placeholder="User Name" required="true"><br>
+                    <input type="password" id="newPassword" name="password" placeholder="Password" required="true"><br>
+                </div>
+                  <div class="modal-footer">        
+                    <button type="button" class="btn btn-primary" id="registerBtn">Sign Up</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CREATE MODAL -->
+          <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content" id="createmodalContent">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="createModalHeader">Create a new post</h5>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="title" placeholder="Title" id="createTitle" required="true"><br>
+                    <input type="text" name="content" placeholder="Content" id="createContent" required="true"><br>
+                    <input type="text" name="image" placeholder="Image URL" id="createImageURL" required="true"><br>
+                </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="createBtn">Create</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+      </section>
+
+      <section id="modalSection">
+      <section>
           
-          
+    </main>          
 
         
     <!-- <script
