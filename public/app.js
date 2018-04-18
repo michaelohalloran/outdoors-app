@@ -64,9 +64,9 @@ function serverRequest(requestURL, httpVerb, data) {
             //readyState of 4 means done; check if it's done, then if the status is OK (200)
             if(this.readyState == 4) {
                 if(this.status >= 200 && this.status < 300) {
-                    console.log('responsetext: ', this.responseText);
-                    console.log('parsed responsetext: ', JSON.parse(this.responseText));
-                    console.log('data: ', data);
+                    // console.log('responsetext: ', this.responseText);
+                    // console.log('parsed responsetext: ', JSON.parse(this.responseText));
+                    // console.log('data: ', data);
                     //resolve is to promises what callback is to the callback method; this is what executes when doing a .then
                     //this parses what comes back back from the server; JSON.parse takes string and makes it into JSON
                     //data is any data I may be sending
