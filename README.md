@@ -10,9 +10,9 @@ The Great Outdoors app allows logged in users to create and update posts contain
 
 <strong>API</strong>
 
-GET(/posts) - to retrieve all posts
-POST(/posts) - to add a new post
-PUT(/id) - to update a post
+GET(/posts) - to retrieve all posts  
+POST(/posts) - to add a new post  
+PUT(/id) - to update a post  
 DELETE(/id) - to delete a post
 
 <strong>Technology</strong>
