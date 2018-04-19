@@ -293,16 +293,12 @@ function deletePost(postId) {
 
         //DELETE FROM DOM: find this ID in the DOM, remove it
         let postItem = document.getElementById(`${deletedPostId}`);
-        if(postItem) {
-            postItem.remove();
+             postItem.remove();
             $(`#${deletedPostId}-deleteModal`).modal('hide');
             //delete the update and deleteModals from the DOM after hiding
-            $(`#${deletedPostId}-updateModal`).remove();
-            $(`#${deletedPostId}-deleteModal`).remove();
-
-        } 
-
-
+            // $(`#${deletedPostId}-updateModal`).remove();
+            // $(`#${deletedPostId}-deleteModal`).remove();
+            // $('.modal-backdrop').remove();
     });
 }
 
