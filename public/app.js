@@ -219,18 +219,20 @@ function createPost() {
         .then((newPost)=> {
             //add div element/thumbnail to gallery
             galleryRow.innerHTML+= `
-            <div id="${newPost._id}" class="col-xs-12 col-sm-6 col-md-4 postItem">
+            <div id="${newPost.id}" class="col-xs-12 col-sm-6 col-md-4 postItem">
                 <h3>${newPost.title}</h3>
                 <div class="thumbnail">
                 <img src="${newPost.image}" alt="${newPost.title}">
                 </div>
                 <p>${newPost.content}</p>
-                <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${newPost._id}-updateModal">
+                <button type="button" class="btn btn-primary updateOpens" data-toggle="modal" data-target="#${newPost.id}-updateModal">
                     Update post
                 </button>
-                <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${newPost._id}-deleteModal">Delete</button>
+                <button type="button" class="btn btn-danger deleteOpens" data-toggle="modal" data-target="#${newPost.id}-deleteModal">Delete</button>
             </div>
             `;
+            appendUpdateModal(newPost);
+            appendDeleteModal(newPost);
             elTitle.value = '';
             elContent.value = '';
             elImageUrl.value = '';
@@ -286,13 +288,19 @@ function deletePost(postId) {
     .then((postObj)=>{
         //my backend route still returns the ID as data object, even though it's deleted
         // console.log(`postObj is ${postObj}, postObj data is ${postObj.data}`);
-        //postObj.data is the post ID
+        //postObj.data is the post ID; use this instead of postId, which will cause undefined
         let deletedPostId = postObj.data;
 
         //DELETE FROM DOM: find this ID in the DOM, remove it
-        let postItem = document.getElementById(`${postId}`);
-        postItem.remove();
-        $(`#${postItem.id}-deleteModal`).modal('hide');
+        let postItem = document.getElementById(`${deletedPostId}`);
+        if(postItem) {
+            postItem.remove();
+            $(`#${postItem.id}-deleteModal`).modal('hide');
+            //delete the update and deleteModals from the DOM after hiding
+            $(`#${postItem.id}-updateModal`).remove();
+            $(`#${postItem.id}-deleteModal`).remove();
+
+        } 
 
 
     });
