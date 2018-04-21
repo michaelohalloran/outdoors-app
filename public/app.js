@@ -53,6 +53,7 @@ createBtn.addEventListener("click", createPost);
 
 //MESSAGES/ALERTS
 const postErrorMsg = 'Please fill in all fields and try submitting again';
+const wrongCreds = 'Wrong username or password';
 const deleteWarning = 'Are you sure you want to delete your post?';
 
 function serverRequest(requestURL, httpVerb, data) {
@@ -124,6 +125,11 @@ function logIn(event) {
                 $('#loginModal').modal('hide');
                 //load all posts, after a successful login (this is happening in .then, meaning it was successful or else we would be in .catch)
                 loadGallery();
+            })
+            .catch(err=> {
+                //display error msg
+                console.log(err);
+                loginTitle.innerHTML+= addModalAlert(wrongCreds);
             });
     } else {
         //if user hasn't input username or password, give them a warning
@@ -159,7 +165,14 @@ function registerNewUser(event) {
                     });
             })
             .catch((err)=> {
-                console.log(err);
+                registerTitle.innerHTML+= addModalAlert(wrongCreds);
+                
+                // console.error(err);
+                // if(err == 422) {
+                //     registerTitle.innerHTML+= addModalAlert('Username already taken');
+                // } else {
+                //     registerTitle.innerHTML+= addModalAlert(wrongCreds);
+                // }
             });
     } else {
         registerTitle.innerHTML+= addModalAlert(postErrorMsg);

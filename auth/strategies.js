@@ -49,7 +49,7 @@ const jwtStrategy = new JwtStrategy(
     algorithms: ['HS256']
   },
   (payload, done) => {
-    console.log('testing jwtStrat');
+    // console.log('testing jwtStrat');
     done(null, payload.user);
   }
 );
