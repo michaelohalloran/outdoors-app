@@ -16,6 +16,16 @@ h1 {
     margin-left: auto;
 }
 
+#demo {
+    margin-top: 5px;
+    background: #adaca6;
+    width: 40vw;
+    margin-right: auto;
+    margin-left: auto;
+    font-weight: bold;
+    font-size: 14px;
+}
+
 /* #imageContainer {
     background: url('https://i.pinimg.com/originals/d1/4f/f2/d14ff2dabf433616b1742b38b7cee931.jpg') no-repeat center center fixed;
     background-size: cover;
