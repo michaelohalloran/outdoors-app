@@ -6,4 +6,3 @@ exports.TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || 'mongodb://localhos
 //mongodb://testingapp:tester1234@ds249249.mlab.com:49249/test-outdoors-app
 exports.PORT = process.env.PORT || 8080;
 exports.JWT_SECRET = process.env.JWT_SECRET || 'secret';
-exports.JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';

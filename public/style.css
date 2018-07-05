@@ -75,7 +75,7 @@ h1 {
     animation-delay: 10s;
 }
 .slideshow li:nth-child(4) {
-    background-image: url('http://www.carolinacremation.com/versionone/wp-content/uploads/2011/11/SUNSET-MOUNTAIN-RANGE-PHOTO.jpg');
+    background-image: url('../unsplash.jpg');
     animation-delay: 15s;
 }
 .slideshow li:nth-child(5) {
