@@ -114,7 +114,7 @@ describe('Posts API resource', function() {
               .get('/posts')
               .set('authorization', `Bearer ${token}`)
               .then(res => {
-                  console.log('res.body.data[0] is: ', res.body.data[0]);
+                //   console.log('res.body.data[0] is: ', res.body.data[0]);
                 expect(res).to.have.status(200);
                 expect(res.body).to.be.an('object');
               });
@@ -320,8 +320,8 @@ describe('Posts API resource', function() {
                         .send(updatePost);
                 })
                 .then(function(res){
-                    console.log('res is', res);
-                    console.log('res.body is', res.body);
+                    // console.log('res is', res);
+                    // console.log('res.body is', res.body);
                     //204 status means successfully reset doc, no content to return
                     expect(res).to.have.status(200);
                     //find ID of post you just updated, return that as promise to next .then
@@ -365,7 +365,7 @@ describe('Posts API resource', function() {
                 })
                 //now check that it's deleted by searching for its ID in DB
                 .then(function(res){
-                    console.log(`res is: `, res)
+                    // console.log(`res is: `, res)
                     expect(res).to.have.status(200);
                     return Post.findById(post.id);
                 })

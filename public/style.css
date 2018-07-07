@@ -75,7 +75,7 @@ h1 {
     animation-delay: 10s;
 }
 .slideshow li:nth-child(4) {
-    background-image: url('../unsplash.jpg');
+    background-image: url('./unsplash.jpg');
     animation-delay: 15s;
 }
 .slideshow li:nth-child(5) {
