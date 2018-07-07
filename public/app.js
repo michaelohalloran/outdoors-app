@@ -53,7 +53,7 @@ createBtn.addEventListener("click", createPost);
 
 //MESSAGES/ALERTS
 const postErrorMsg = 'Please fill in all fields and try submitting again';
-const wrongCreds = 'Wrong username or password.  All fields must be filled in and spelled correctly, password must be between 10-72 characters, and new registrations cannot take an already-existing username.'; 
+const wrongCreds = 'Wrong username or password.  All fields must be filled in and spelled correctly, password must be between 10-72 characters, and new registrations cannot take an already-existing username'; 
 const deleteWarning = 'Are you sure you want to delete your post?';
 
 function serverRequest(requestURL, httpVerb, data) {
